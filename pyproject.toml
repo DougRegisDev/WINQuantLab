@@ -1,0 +1,99 @@
+[build-system]
+requires = ["setuptools>=75"]
+build-backend = "setuptools.build_meta"
+
+
+[project]
+name = "WINQuantLab"
+version = "0.5.0"
+description = "Framework para pesquisa, desenvolvimento e backtesting de estratégias quantitativas."
+readme = "README.md"
+requires-python = ">=3.13"
+license = { text = "MIT" }
+
+authors = [
+    { name = "Douglas Regis" },
+]
+
+keywords = [
+    "python",
+    "trading",
+    "quant",
+    "finance",
+    "backtest",
+    "indicators",
+    "technical-analysis",
+    "algorithmic-trading",
+]
+
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Financial and Insurance Industry",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Office/Business :: Financial :: Investment",
+    "Topic :: Scientific/Engineering :: Information Analysis",
+]
+
+dependencies = [
+    "pandas",
+]
+
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "ruff",
+]
+
+
+[tool.setuptools.packages.find]
+where = ["."]
+
+include = [
+    "config*",
+    "core*",
+    "data*",
+    "indicators*",
+    "reports*",
+    "strategies*",
+]
+
+exclude = [
+    "assets*",
+    "docs*",
+    "notebooks*",
+    "tests*",
+]
+
+
+[tool.ruff]
+line-length = 88
+target-version = "py313"
+
+exclude = [
+    ".git",
+    ".pytest_cache",
+    ".ruff_cache",
+    ".venv",
+    "__pycache__",
+    "build",
+    "dist",
+]
+
+
+[tool.ruff.lint]
+select = [
+    "E",
+    "F",
+    "I",
+]
+
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+line-ending = "auto"
