@@ -34,9 +34,26 @@ O formato segue o padrão **Keep a Changelog** e utiliza **Versionamento Semânt
 - Implementadas validações das colunas obrigatórias `high` e `low`.
 - Implementadas validações dos parâmetros `step` e `max_step`.
 
+#### Indicadores de Volume
+
+- Criada a família `indicators.volume`.
+- Implementado Volume Weighted Average Price (VWAP).
+
+#### VWAP
+
+- Implementado cálculo do Typical Price utilizando `high`, `low` e `close`.
+- Implementado cálculo de preço ponderado pelo volume.
+- Implementado cálculo acumulado de preço × volume.
+- Implementado cálculo acumulado de volume.
+- Implementado cálculo do Volume Weighted Average Price (VWAP).
+- Implementadas validações das colunas obrigatórias `high`, `low`, `close` e `volume`.
+- Implementado tratamento para DataFrame vazio.
+- Implementado comportamento para séries com volume acumulado igual a zero.
+- Preservado o DataFrame original por meio de cópia antes do cálculo.
+
 #### Testes
 
-Adicionados testes automatizados para os indicadores de tendência e seus comportamentos.
+Adicionados testes automatizados para os indicadores de tendência e volume.
 
 O Parabolic SAR possui 11 testes cobrindo:
 
@@ -52,33 +69,48 @@ O Parabolic SAR possui 11 testes cobrindo:
 - DataFrame vazio.
 - Série contendo apenas um registro.
 
+O VWAP possui 9 testes cobrindo:
+
+- Criação da coluna `vwap`.
+- Cálculo dos valores esperados.
+- Ausência da coluna `high`.
+- Ausência da coluna `low`.
+- Ausência da coluna `close`.
+- Ausência da coluna `volume`.
+- DataFrame vazio.
+- Volume acumulado igual a zero.
+- Preservação do DataFrame original.
+
 Estado atual da suíte:
 
-- 137 testes automatizados.
-- 137 testes aprovados.
+- 146 testes automatizados.
+- 146 testes aprovados.
 - 0 falhas.
 
 #### Arquitetura
 
 - Expandida a família `indicators.trend`.
-- Mantida a separação entre indicadores de tendência e demais famílias.
+- Criada a família `indicators.volume`.
+- Mantida a separação entre famílias de indicadores.
 - Introduzido indicador com cálculo stateful/iterativo por meio do Parabolic SAR.
+- Introduzido cálculo ponderado por volume por meio do VWAP.
 - Mantida a arquitetura modular dos indicadores.
 - Preservada a compatibilidade com os componentes existentes do projeto.
 
 #### Qualidade
 
 - Parabolic SAR desenvolvido utilizando TDD.
+- VWAP desenvolvido utilizando TDD.
 - Validações de entrada adicionadas.
 - Casos de borda cobertos por testes automatizados.
-- Suíte completa executada após a implementação.
+- Preservação dos dados de entrada verificada por teste.
+- Suíte completa executada após as implementações.
 - Nenhuma regressão identificada nos testes existentes.
 
 ### Planejado
 
 #### Indicadores de Volume
 
-- VWAP
 - Volume Financeiro
 - On Balance Volume (OBV)
 - Weis Wave
