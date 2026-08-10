@@ -143,7 +143,7 @@ WINQuantLab
 Clone the repository:
 
 ```bash
-git clone https://github.com/DougRegis/WINQuantLab.git
+git clone https://github.com/DougRegisDev/WINQuantLab.git
 ```
 
 Install dependencies:
