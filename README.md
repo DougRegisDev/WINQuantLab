@@ -242,7 +242,7 @@ Systems Analyst • Python Developer • ServiceNow Developer
 Passionate about Software Engineering, Automation and Quantitative Finance.
 
 GitHub:
-https://github.com/DougRegis
+https://github.com/DougRegisDev
 
 LinkedIn:
 *(coming soon)*
