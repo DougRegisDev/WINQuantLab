@@ -1,4 +1,5 @@
 import pandas as pd
+import pytest
 
 from indicators.trend.parabolic_sar import parabolic_sar
 
@@ -73,8 +74,6 @@ def test_parabolic_sar_reverses_direction():
 
     assert sar.iloc[-1] >= df["high"].iloc[-1]
 
-
-import pytest
 
 
 def test_parabolic_sar_invalid_step():
