@@ -245,7 +245,7 @@ GitHub:
 https://github.com/DougRegisDev
 
 LinkedIn:
-*(coming soon)*
+https://www.linkedin.com/in/douglas-betta-regis/
 
 ---
 

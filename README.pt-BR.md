@@ -229,7 +229,7 @@ Analista de Sistemas | Desenvolvedor Python | Engenharia de Software | Automaç�
 
 LinkedIn
 
-*(Adicionar após publicação)*
+https://www.linkedin.com/in/douglas-betta-regis/
 
 GitHub
 
