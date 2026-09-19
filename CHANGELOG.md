@@ -39,6 +39,7 @@ O formato segue o padrão **Keep a Changelog** e utiliza **Versionamento Semânt
 - Criada a família `indicators.volume`.
 - Implementado Volume Weighted Average Price (VWAP).
 - Implementado Volume Financeiro.
+- Implementado On-Balance Volume (OBV).
 
 #### VWAP
 
@@ -59,6 +60,18 @@ O formato segue o padrão **Keep a Changelog** e utiliza **Versionamento Semânt
 - Implementadas validações das colunas obrigatórias `close` e `volume`.
 - Implementado tratamento para DataFrame vazio.
 - Implementado comportamento para candles com volume igual a zero.
+- Preservado o DataFrame original por meio de cópia antes do cálculo.
+
+#### On-Balance Volume
+
+- Implementado On-Balance Volume (OBV).
+- Definido valor inicial do OBV como `0.0`.
+- Implementado acréscimo do volume quando o fechamento atual é superior ao fechamento anterior.
+- Implementada subtração do volume quando o fechamento atual é inferior ao fechamento anterior.
+- Implementada manutenção do OBV quando os fechamentos atual e anterior são iguais.
+- Implementadas validações das colunas obrigatórias `close` e `volume`.
+- Implementado tratamento para DataFrame vazio.
+- Implementado tratamento para séries contendo apenas um registro.
 - Preservado o DataFrame original por meio de cópia antes do cálculo.
 
 #### Testes
@@ -101,10 +114,20 @@ O Volume Financeiro possui 7 testes cobrindo:
 - Preservação do DataFrame original.
 - Volume igual a zero.
 
+O On-Balance Volume possui 7 testes cobrindo:
+
+- Criação da coluna `obv`.
+- Cálculo dos valores esperados.
+- DataFrame vazio.
+- Ausência da coluna `close`.
+- Ausência da coluna `volume`.
+- Preservação do DataFrame original.
+- Série contendo apenas um registro.
+
 Estado atual da suíte:
 
-- 153 testes automatizados.
-- 153 testes aprovados.
+- 160 testes automatizados.
+- 160 testes aprovados.
 - 0 falhas.
 
 #### Arquitetura
@@ -115,6 +138,7 @@ Estado atual da suíte:
 - Introduzido indicador com cálculo stateful/iterativo por meio do Parabolic SAR.
 - Introduzido cálculo ponderado por volume por meio do VWAP.
 - Introduzido cálculo de volume financeiro por candle.
+- Introduzido indicador de volume acumulativo por meio do OBV.
 - Mantida a arquitetura modular dos indicadores.
 - Preservada a compatibilidade com os componentes existentes do projeto.
 
@@ -123,6 +147,7 @@ Estado atual da suíte:
 - Parabolic SAR desenvolvido utilizando TDD.
 - VWAP desenvolvido utilizando TDD.
 - Volume Financeiro desenvolvido utilizando TDD.
+- OBV desenvolvido utilizando TDD.
 - Validações de entrada adicionadas.
 - Casos de borda cobertos por testes automatizados.
 - Preservação dos dados de entrada verificada por testes.
@@ -134,7 +159,6 @@ Estado atual da suíte:
 
 #### Indicadores de Volume
 
-- On Balance Volume (OBV)
 - Weis Wave
 
 #### Estratégias
