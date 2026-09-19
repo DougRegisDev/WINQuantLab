@@ -38,6 +38,7 @@ O formato segue o padrão **Keep a Changelog** e utiliza **Versionamento Semânt
 
 - Criada a família `indicators.volume`.
 - Implementado Volume Weighted Average Price (VWAP).
+- Implementado Volume Financeiro.
 
 #### VWAP
 
@@ -49,6 +50,15 @@ O formato segue o padrão **Keep a Changelog** e utiliza **Versionamento Semânt
 - Implementadas validações das colunas obrigatórias `high`, `low`, `close` e `volume`.
 - Implementado tratamento para DataFrame vazio.
 - Implementado comportamento para séries com volume acumulado igual a zero.
+- Preservado o DataFrame original por meio de cópia antes do cálculo.
+
+#### Volume Financeiro
+
+- Implementado cálculo de Volume Financeiro utilizando `close × volume`.
+- Criada a coluna `financial_volume`.
+- Implementadas validações das colunas obrigatórias `close` e `volume`.
+- Implementado tratamento para DataFrame vazio.
+- Implementado comportamento para candles com volume igual a zero.
 - Preservado o DataFrame original por meio de cópia antes do cálculo.
 
 #### Testes
@@ -81,19 +91,30 @@ O VWAP possui 9 testes cobrindo:
 - Volume acumulado igual a zero.
 - Preservação do DataFrame original.
 
+O Volume Financeiro possui 7 testes cobrindo:
+
+- Criação da coluna `financial_volume`.
+- Cálculo dos valores esperados.
+- Ausência da coluna `close`.
+- Ausência da coluna `volume`.
+- DataFrame vazio.
+- Preservação do DataFrame original.
+- Volume igual a zero.
+
 Estado atual da suíte:
 
-- 146 testes automatizados.
-- 146 testes aprovados.
+- 153 testes automatizados.
+- 153 testes aprovados.
 - 0 falhas.
 
 #### Arquitetura
 
 - Expandida a família `indicators.trend`.
-- Criada a família `indicators.volume`.
+- Criada e expandida a família `indicators.volume`.
 - Mantida a separação entre famílias de indicadores.
 - Introduzido indicador com cálculo stateful/iterativo por meio do Parabolic SAR.
 - Introduzido cálculo ponderado por volume por meio do VWAP.
+- Introduzido cálculo de volume financeiro por candle.
 - Mantida a arquitetura modular dos indicadores.
 - Preservada a compatibilidade com os componentes existentes do projeto.
 
@@ -101,9 +122,11 @@ Estado atual da suíte:
 
 - Parabolic SAR desenvolvido utilizando TDD.
 - VWAP desenvolvido utilizando TDD.
+- Volume Financeiro desenvolvido utilizando TDD.
 - Validações de entrada adicionadas.
 - Casos de borda cobertos por testes automatizados.
-- Preservação dos dados de entrada verificada por teste.
+- Preservação dos dados de entrada verificada por testes.
+- Projeto validado com Ruff.
 - Suíte completa executada após as implementações.
 - Nenhuma regressão identificada nos testes existentes.
 
@@ -111,7 +134,6 @@ Estado atual da suíte:
 
 #### Indicadores de Volume
 
-- Volume Financeiro
 - On Balance Volume (OBV)
 - Weis Wave
 
