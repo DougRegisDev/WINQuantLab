@@ -75,7 +75,6 @@ def test_parabolic_sar_reverses_direction():
     assert sar.iloc[-1] >= df["high"].iloc[-1]
 
 
-
 def test_parabolic_sar_invalid_step():
     df = pd.DataFrame(
         {

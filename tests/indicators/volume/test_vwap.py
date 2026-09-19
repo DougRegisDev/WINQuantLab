@@ -46,8 +46,6 @@ def test_vwap_calculates_expected_values():
     )
 
 
-
-
 def test_vwap_missing_high_column():
     df = pd.DataFrame(
         {
