@@ -40,6 +40,7 @@ O formato segue o padrão **Keep a Changelog** e utiliza **Versionamento Semânt
 - Implementado Volume Weighted Average Price (VWAP).
 - Implementado Volume Financeiro.
 - Implementado On-Balance Volume (OBV).
+- Implementado Weis Wave Volume.
 
 #### VWAP
 
@@ -69,6 +70,21 @@ O formato segue o padrão **Keep a Changelog** e utiliza **Versionamento Semânt
 - Implementado acréscimo do volume quando o fechamento atual é superior ao fechamento anterior.
 - Implementada subtração do volume quando o fechamento atual é inferior ao fechamento anterior.
 - Implementada manutenção do OBV quando os fechamentos atual e anterior são iguais.
+- Implementadas validações das colunas obrigatórias `close` e `volume`.
+- Implementado tratamento para DataFrame vazio.
+- Implementado tratamento para séries contendo apenas um registro.
+- Preservado o DataFrame original por meio de cópia antes do cálculo.
+
+#### Weis Wave Volume
+
+- Implementado cálculo acumulativo de volume por ondas direcionais.
+- Implementada identificação de ondas de alta com direção `1`.
+- Implementada identificação de ondas de baixa com direção `-1`.
+- Definido estado inicial neutro com direção `0`.
+- Implementado acúmulo de volume enquanto a direção da onda é mantida.
+- Implementado reinício do volume acumulado quando ocorre mudança de direção.
+- Implementada manutenção da direção vigente quando o fechamento permanece inalterado.
+- Implementado acúmulo dos volumes iniciais enquanto a direção da primeira onda ainda não foi definida.
 - Implementadas validações das colunas obrigatórias `close` e `volume`.
 - Implementado tratamento para DataFrame vazio.
 - Implementado tratamento para séries contendo apenas um registro.
@@ -124,10 +140,24 @@ O On-Balance Volume possui 7 testes cobrindo:
 - Preservação do DataFrame original.
 - Série contendo apenas um registro.
 
+O Weis Wave Volume possui 11 testes cobrindo:
+
+- Criação das colunas `weis_wave_direction` e `weis_wave_volume`.
+- Acúmulo de volume em ondas de alta.
+- Acúmulo de volume em ondas de baixa.
+- Reinício do volume após mudança de direção.
+- Manutenção da direção quando o fechamento permanece igual.
+- Acúmulo de volume durante o estado neutro inicial.
+- DataFrame vazio.
+- Ausência da coluna `close`.
+- Ausência da coluna `volume`.
+- Série contendo apenas um registro.
+- Preservação do DataFrame original.
+
 Estado atual da suíte:
 
-- 160 testes automatizados.
-- 160 testes aprovados.
+- 171 testes automatizados.
+- 171 testes aprovados.
 - 0 falhas.
 
 #### Arquitetura
@@ -141,6 +171,7 @@ Estado atual da suíte:
 - Introduzido indicador de volume acumulativo por meio do OBV.
 - Mantida a arquitetura modular dos indicadores.
 - Preservada a compatibilidade com os componentes existentes do projeto.
+- Introduzido indicador stateful de volume por ondas direcionais por meio do Weis Wave
 
 #### Qualidade
 
@@ -148,6 +179,7 @@ Estado atual da suíte:
 - VWAP desenvolvido utilizando TDD.
 - Volume Financeiro desenvolvido utilizando TDD.
 - OBV desenvolvido utilizando TDD.
+- Weis Wave desenvolvido utilizando TDD.
 - Validações de entrada adicionadas.
 - Casos de borda cobertos por testes automatizados.
 - Preservação dos dados de entrada verificada por testes.
@@ -156,10 +188,6 @@ Estado atual da suíte:
 - Nenhuma regressão identificada nos testes existentes.
 
 ### Planejado
-
-#### Indicadores de Volume
-
-- Weis Wave
 
 #### Estratégias
 
