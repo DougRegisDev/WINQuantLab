@@ -90,9 +90,34 @@ O formato segue o padrão **Keep a Changelog** e utiliza **Versionamento Semânt
 - Implementado tratamento para séries contendo apenas um registro.
 - Preservado o DataFrame original por meio de cópia antes do cálculo.
 
+#### Estratégias
+
+- Criada a camada inicial de estratégias.
+- Implementada a estratégia Moving Average Crossover.
+- Implementada composição interna dos indicadores necessários pela estratégia.
+- Definida convenção de sinais:
+  - `1` para sinal de compra.
+  - `0` para ausência de novo sinal.
+  - `-1` para sinal de venda.
+- Definido `signal` como evento e não como estado de posição.
+- Preservado o DataFrame original durante a execução da estratégia.
+
+#### Moving Average Crossover
+
+- Implementado cálculo interno das médias móveis simples rápida e lenta.
+- Implementada geração de sinal de compra no cruzamento da média rápida de baixo para cima da média lenta.
+- Implementada geração de sinal de venda no cruzamento da média rápida de cima para baixo da média lenta.
+- Evitada geração repetida de sinais enquanto as médias permanecem na mesma relação.
+- Implementada validação de que `fast_period` deve ser menor que `slow_period`.
+- Mantidas no indicador SMA as validações específicas dos períodos.
+- Implementado comportamento para DataFrame vazio.
+- Implementado tratamento da ausência da coluna obrigatória `close`.
+- Impedida geração de sinais durante o período de aquecimento das médias.
+- Preservado o DataFrame original por meio de cópia antes dos cálculos.
+
 #### Testes
 
-Adicionados testes automatizados para os indicadores de tendência e volume.
+Adicionados testes automatizados para os indicadores de tendência, volume e estratégias.
 
 O Parabolic SAR possui 11 testes cobrindo:
 
@@ -154,10 +179,25 @@ O Weis Wave Volume possui 11 testes cobrindo:
 - Série contendo apenas um registro.
 - Preservação do DataFrame original.
 
+O Moving Average Crossover possui 12 testes cobrindo:
+
+- Criação da coluna `signal`.
+- Cálculo interno das médias móveis rápida e lenta.
+- Geração de sinal de compra.
+- Geração de sinal de venda.
+- Sinal tratado como evento e não como posição.
+- Preservação do DataFrame original.
+- Rejeição de períodos iguais.
+- Rejeição de `fast_period` maior que `slow_period`.
+- Propagação de erro para período inválido do indicador.
+- DataFrame vazio.
+- Ausência da coluna `close`.
+- Ausência de sinais durante o período de aquecimento.
+
 Estado atual da suíte:
 
-- 171 testes automatizados.
-- 171 testes aprovados.
+- 183 testes automatizados.
+- 183 testes aprovados.
 - 0 falhas.
 
 #### Arquitetura
@@ -169,9 +209,16 @@ Estado atual da suíte:
 - Introduzido cálculo ponderado por volume por meio do VWAP.
 - Introduzido cálculo de volume financeiro por candle.
 - Introduzido indicador de volume acumulativo por meio do OBV.
+- Introduzido indicador stateful de volume por ondas direcionais por meio do Weis Wave.
 - Mantida a arquitetura modular dos indicadores.
 - Preservada a compatibilidade com os componentes existentes do projeto.
-- Introduzido indicador stateful de volume por ondas direcionais por meio do Weis Wave
+- Introduzida a camada de estratégias.
+- Definido contrato inicial para estratégias.
+- Definida separação entre geração de sinais e gerenciamento de posições.
+- Definida composição de indicadores pelas estratégias sem duplicação dos cálculos.
+- Definida separação entre Strategy e futura camada de Backtesting.
+- Registrada a arquitetura de estratégias no ADR-005.
+- Adiada a criação de abstrações como Strategy base ou Protocol até que múltiplas estratégias demonstrem necessidade concreta.
 
 #### Qualidade
 
@@ -180,18 +227,19 @@ Estado atual da suíte:
 - Volume Financeiro desenvolvido utilizando TDD.
 - OBV desenvolvido utilizando TDD.
 - Weis Wave desenvolvido utilizando TDD.
+- Moving Average Crossover desenvolvido utilizando TDD.
 - Validações de entrada adicionadas.
 - Casos de borda cobertos por testes automatizados.
 - Preservação dos dados de entrada verificada por testes.
 - Projeto validado com Ruff.
 - Suíte completa executada após as implementações.
+- 183 testes aprovados.
 - Nenhuma regressão identificada nos testes existentes.
 
 ### Planejado
 
 #### Estratégias
 
-- Cruzamento de Médias
 - Pullback
 - Rompimento
 - Price Action
