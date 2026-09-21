@@ -115,6 +115,25 @@ O formato segue o padrão **Keep a Changelog** e utiliza **Versionamento Semânt
 - Impedida geração de sinais durante o período de aquecimento das médias.
 - Preservado o DataFrame original por meio de cópia antes dos cálculos.
 
+#### Breakout
+
+- Implementada estratégia de rompimento baseada em máximas e mínimas anteriores.
+- Implementado parâmetro configurável `lookback`.
+- Implementado cálculo de `breakout_high` utilizando a maior máxima das N velas anteriores.
+- Implementado cálculo de `breakout_low` utilizando a menor mínima das N velas anteriores.
+- Excluída a vela atual do cálculo dos níveis de rompimento.
+- Implementada confirmação de rompimento pelo preço de fechamento (`close`).
+- Implementado sinal de compra (`1`) quando `close` rompe `breakout_high`.
+- Implementado sinal de venda (`-1`) quando `close` rompe `breakout_low`.
+- Mantido sinal neutro (`0`) quando não ocorre rompimento confirmado.
+- Impedida geração de sinal quando o fechamento apenas toca o nível.
+- Impedida geração de sinal quando apenas o pavio rompe o nível.
+- Implementada validação de `lookback`.
+- Implementadas validações das colunas obrigatórias `high`, `low` e `close`.
+- Implementado tratamento para DataFrame vazio.
+- Impedida geração de sinais durante o período de aquecimento.
+- Preservado o DataFrame original por meio de cópia antes dos cálculos.
+
 #### Testes
 
 Adicionados testes automatizados para os indicadores de tendência, volume e estratégias.
@@ -194,10 +213,30 @@ O Moving Average Crossover possui 12 testes cobrindo:
 - Ausência da coluna `close`.
 - Ausência de sinais durante o período de aquecimento.
 
+O Breakout possui 17 testes cobrindo:
+
+- Criação das colunas `breakout_high`, `breakout_low` e `signal`.
+- Cálculo da máxima das velas anteriores.
+- Cálculo da mínima das velas anteriores.
+- Geração de sinal de compra.
+- Geração de sinal de venda.
+- Ausência de sinal quando o fechamento apenas toca o nível.
+- Preservação do DataFrame original.
+- Rejeição de `lookback` igual a zero.
+- Rejeição de `lookback` negativo.
+- Ausência da coluna `high`.
+- Ausência da coluna `low`.
+- Ausência da coluna `close`.
+- Ausência de sinais durante o período de aquecimento.
+- DataFrame vazio.
+- Ausência de sinal quando apenas o pavio rompe os níveis.
+- Ausência de sinal quando o fechamento permanece dentro da faixa.
+- Aceitação de `lookback=1`.
+
 Estado atual da suíte:
 
-- 183 testes automatizados.
-- 183 testes aprovados.
+- 200 testes automatizados.
+- 200 testes aprovados.
 - 0 falhas.
 
 #### Arquitetura
@@ -228,12 +267,13 @@ Estado atual da suíte:
 - OBV desenvolvido utilizando TDD.
 - Weis Wave desenvolvido utilizando TDD.
 - Moving Average Crossover desenvolvido utilizando TDD.
+- Breakout desenvolvido utilizando TDD.
 - Validações de entrada adicionadas.
 - Casos de borda cobertos por testes automatizados.
 - Preservação dos dados de entrada verificada por testes.
 - Projeto validado com Ruff.
 - Suíte completa executada após as implementações.
-- 183 testes aprovados.
+- 200 testes aprovados.
 - Nenhuma regressão identificada nos testes existentes.
 
 ### Planejado
@@ -241,7 +281,6 @@ Estado atual da suíte:
 #### Estratégias
 
 - Pullback
-- Rompimento
 - Price Action
 
 #### Backtesting
