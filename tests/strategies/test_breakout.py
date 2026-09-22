@@ -386,6 +386,8 @@ def test_breakout_raises_error_when_close_is_missing():
             df,
             lookback=2,
         )
+
+
 def test_breakout_does_not_signal_during_warmup():
     df = pd.DataFrame(
         {
@@ -423,6 +425,7 @@ def test_breakout_does_not_signal_during_warmup():
         0,
         0,
     ]
+
 
 def test_breakout_handles_empty_dataframe():
     df = pd.DataFrame(
@@ -476,6 +479,7 @@ def test_breakout_does_not_signal_when_only_wick_breaks_level():
     assert result["breakout_high"].iloc[3] == 12.0
     assert result["breakout_low"].iloc[3] == 8.0
     assert result["signal"].iloc[3] == 0
+
 
 def test_breakout_generates_no_signal_inside_range():
     df = pd.DataFrame(
