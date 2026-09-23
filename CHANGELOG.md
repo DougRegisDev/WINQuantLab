@@ -134,6 +134,33 @@ O formato segue o padrão **Keep a Changelog** e utiliza **Versionamento Semânt
 - Impedida geração de sinais durante o período de aquecimento.
 - Preservado o DataFrame original por meio de cópia antes dos cálculos.
 
+#### Backtesting Engine
+
+- Criada a camada inicial de Backtesting.
+- Implementado motor de execução por meio de `backtest()`.
+- Implementada execução de sinais no `open` do candle seguinte.
+- Implementados os estados operacionais FLAT, LONG e SHORT.
+- Implementada abertura de posições LONG a partir de `signal = 1`.
+- Implementada abertura de posições SHORT a partir de `signal = -1`.
+- Implementado encerramento de posições LONG por sinal contrário.
+- Implementado encerramento de posições SHORT por sinal contrário.
+- Impedida reversão automática de posição.
+- Impedida piramidação por sinais repetidos na mesma direção.
+- Definida quantidade inicial fixa em `quantity = 1`.
+- Implementado cálculo de resultado em pontos para operações LONG.
+- Implementado cálculo de resultado em pontos para operações SHORT.
+- Implementado suporte a múltiplos trades sequenciais.
+- Implementado encerramento forçado de posições abertas no `close` do último candle.
+- Impedida execução de sinais presentes no último candle quando não existe próximo `open`.
+- Implementadas validações das colunas obrigatórias `open`, `close` e `signal`.
+- Implementada validação dos valores permitidos para `signal`: `-1`, `0` e `1`.
+- Implementada rejeição de valores `NaN` em `signal`.
+- Implementado tratamento para DataFrame vazio e séries contendo apenas um candle.
+- Preservado o DataFrame original durante a execução do backtest.
+- Implementado suporte a índices personalizados sem alterar a indexação posicional dos trades.
+- Implementada preservação de `entry_time` e `exit_time` quando utilizado `DatetimeIndex`.
+- Implementado registro estruturado de `direction`, `entry_index`, `entry_price`, `exit_index`, `exit_price`, `quantity` e `pnl_points`.
+
 #### Testes
 
 Adicionados testes automatizados para os indicadores de tendência, volume e estratégias.
@@ -233,10 +260,38 @@ O Breakout possui 17 testes cobrindo:
 - Ausência de sinal quando o fechamento permanece dentro da faixa.
 - Aceitação de `lookback=1`.
 
+O Backtesting Engine possui 25 testes cobrindo:
+
+- Ausência de trades quando não existem sinais.
+- Execução de LONG no `open` do candle seguinte.
+- Encerramento de LONG no final da sessão.
+- Cálculo de resultado positivo e negativo para LONG.
+- Execução de SHORT no `open` do candle seguinte.
+- Cálculo de resultado para SHORT.
+- Encerramento de LONG por sinal contrário.
+- Encerramento de SHORT por sinal contrário.
+- Ausência de reversão automática.
+- Rejeição de piramidação em LONG.
+- Rejeição de piramidação em SHORT.
+- Execução de múltiplos trades sequenciais.
+- Ausência de execução para sinal no último candle.
+- Tratamento de DataFrame vazio.
+- Ausência da coluna `signal`.
+- Ausência da coluna `open`.
+- Ausência da coluna `close`.
+- Preservação do DataFrame original.
+- Encerramento de posição aberta no último candle.
+- Comportamento com apenas um candle.
+- Rejeição de valores inválidos em `signal`.
+- Rejeição de `NaN` em `signal`.
+- Suporte a índice personalizado.
+- Preservação de `entry_time` e `exit_time` com `DatetimeIndex`.
+- Preservação de `exit_time` em encerramento por sinal contrário.
+
 Estado atual da suíte:
 
-- 200 testes automatizados.
-- 200 testes aprovados.
+- 225 testes automatizados.
+- 225 testes aprovados.
 - 0 falhas.
 
 #### Arquitetura
@@ -258,6 +313,16 @@ Estado atual da suíte:
 - Definida separação entre Strategy e futura camada de Backtesting.
 - Registrada a arquitetura de estratégias no ADR-005.
 - Adiada a criação de abstrações como Strategy base ou Protocol até que múltiplas estratégias demonstrem necessidade concreta.
+- Introduzida a camada de Backtesting.
+- Implementado Backtesting Engine independente das Strategies.
+- Definida execução de sinais no `open` do candle seguinte para evitar lookahead bias.
+- Definida máquina de estados inicial com FLAT, LONG e SHORT.
+- Mantida separação entre geração de sinais, execução de operações e análise de resultados.
+- Definido `signal` como evento consumido pelo Backtesting Engine.
+- Definido contrato inicial estruturado para registro de trades.
+- Mantida indexação posicional para `entry_index` e `exit_index`.
+- Adicionada preservação opcional de informação temporal por meio de `entry_time` e `exit_time`.
+- Registrada a arquitetura de Backtesting no ADR-006.
 
 #### Qualidade
 
@@ -268,12 +333,13 @@ Estado atual da suíte:
 - Weis Wave desenvolvido utilizando TDD.
 - Moving Average Crossover desenvolvido utilizando TDD.
 - Breakout desenvolvido utilizando TDD.
+- Backtesting Engine V1 desenvolvido utilizando TDD.
 - Validações de entrada adicionadas.
 - Casos de borda cobertos por testes automatizados.
 - Preservação dos dados de entrada verificada por testes.
 - Projeto validado com Ruff.
 - Suíte completa executada após as implementações.
-- 200 testes aprovados.
+- 255 testes aprovados.
 - Nenhuma regressão identificada nos testes existentes.
 
 ### Planejado
@@ -281,11 +347,11 @@ Estado atual da suíte:
 #### Estratégias
 
 - Pullback
+- Rompimento
 - Price Action
 
 #### Backtesting
 
-- Motor de backtesting.
 - Otimização de parâmetros.
 - Relatórios estatísticos.
 
