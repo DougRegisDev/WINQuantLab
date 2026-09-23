@@ -152,7 +152,7 @@ O formato segue o padrão **Keep a Changelog** e utiliza **Versionamento Semânt
 - Implementado suporte a múltiplos trades sequenciais.
 - Implementado encerramento forçado de posições abertas no `close` do último candle.
 - Impedida execução de sinais presentes no último candle quando não existe próximo `open`.
-- Implementadas validações das colunas obrigatórias `open`, `close` e `signal`.
+- Implementadas validações das colunas obrigatórias `open`, `high`, `low`, `close` e `signal`.
 - Implementada validação dos valores permitidos para `signal`: `-1`, `0` e `1`.
 - Implementada rejeição de valores `NaN` em `signal`.
 - Implementado tratamento para DataFrame vazio e séries contendo apenas um candle.
@@ -160,6 +160,15 @@ O formato segue o padrão **Keep a Changelog** e utiliza **Versionamento Semânt
 - Implementado suporte a índices personalizados sem alterar a indexação posicional dos trades.
 - Implementada preservação de `entry_time` e `exit_time` quando utilizado `DatetimeIndex`.
 - Implementado registro estruturado de `direction`, `entry_index`, `entry_price`, `exit_index`, `exit_price`, `quantity` e `pnl_points`.
+- Implementado cálculo de Maximum Favorable Excursion (`mfe_points`) para LONG e SHORT.
+- Implementado cálculo de Maximum Adverse Excursion (`mae_points`) para LONG e SHORT.
+- Implementado registro de `favorable_price` e `adverse_price`.
+- Implementado registro de `mfe_index` e `mae_index`, utilizando a primeira ocorrência quando o mesmo extremo se repete.
+- Implementada janela de observação limitada ao período em que a posição esteve efetivamente ativa.
+- Incluído o candle final nos cálculos de excursão quando ocorre fechamento forçado no último `close`.
+- Excluído o candle de saída dos cálculos de excursão quando a posição é encerrada no próximo `open`.
+- Implementada classificação de `outcome` em `win`, `loss` e `even`, determinada exclusivamente por `pnl_points`.
+- Implementado `duration_candles` como quantidade de candles em que a posição permaneceu efetivamente ativa.
 
 #### Testes
 
@@ -260,7 +269,7 @@ O Breakout possui 17 testes cobrindo:
 - Ausência de sinal quando o fechamento permanece dentro da faixa.
 - Aceitação de `lookback=1`.
 
-O Backtesting Engine possui 25 testes cobrindo:
+O Backtesting Engine possui 49 testes cobrindo:
 
 - Ausência de trades quando não existem sinais.
 - Execução de LONG no `open` do candle seguinte.
@@ -287,11 +296,22 @@ O Backtesting Engine possui 25 testes cobrindo:
 - Suporte a índice personalizado.
 - Preservação de `entry_time` e `exit_time` com `DatetimeIndex`.
 - Preservação de `exit_time` em encerramento por sinal contrário.
+- Validação das colunas obrigatórias `high` e `low`.
+- Cálculo de MFE para operações LONG e SHORT.
+- Cálculo de MAE para operações LONG e SHORT.
+- Inclusão do último candle em MFE/MAE quando ocorre fechamento forçado.
+- Registro de `favorable_price` e `adverse_price`.
+- Registro de `mfe_index` e `mae_index`.
+- Primeira ocorrência como convenção para extremos repetidos.
+- Classificação de resultado como `win`, `loss` ou `even`.
+- Independência entre `outcome` e as excursões MFE/MAE.
+- Cálculo de `duration_candles` em saída por sinal contrário.
+- Cálculo de `duration_candles` em fechamento forçado.
 
 Estado atual da suíte:
 
-- 225 testes automatizados.
-- 225 testes aprovados.
+- 249 testes automatizados.
+- 249 testes aprovados.
 - 0 falhas.
 
 #### Arquitetura
@@ -319,10 +339,14 @@ Estado atual da suíte:
 - Definida máquina de estados inicial com FLAT, LONG e SHORT.
 - Mantida separação entre geração de sinais, execução de operações e análise de resultados.
 - Definido `signal` como evento consumido pelo Backtesting Engine.
-- Definido contrato inicial estruturado para registro de trades.
+- Evoluído o contrato estruturado de trades com métricas analíticas de excursão, duração e resultado.
 - Mantida indexação posicional para `entry_index` e `exit_index`.
 - Adicionada preservação opcional de informação temporal por meio de `entry_time` e `exit_time`.
 - Registrada a arquitetura de Backtesting no ADR-006.
+- Refinado o ADR-006 com a filosofia de medição analítica de trajetória de preço.
+- Formalizada a distinção entre resultado final (`outcome`) e excursões favorável/adversa.
+- Formalizada a janela ativa utilizada por MFE, MAE e duração do trade.
+- Formalizada a primeira ocorrência como convenção para índices de extremos repetidos.
 
 #### Qualidade
 
@@ -333,13 +357,13 @@ Estado atual da suíte:
 - Weis Wave desenvolvido utilizando TDD.
 - Moving Average Crossover desenvolvido utilizando TDD.
 - Breakout desenvolvido utilizando TDD.
-- Backtesting Engine V1 desenvolvido utilizando TDD.
+- Backtesting Engine V1 e evolução analítica V2 desenvolvidos utilizando TDD.
 - Validações de entrada adicionadas.
 - Casos de borda cobertos por testes automatizados.
 - Preservação dos dados de entrada verificada por testes.
 - Projeto validado com Ruff.
 - Suíte completa executada após as implementações.
-- 255 testes aprovados.
+- 249 testes aprovados.
 - Nenhuma regressão identificada nos testes existentes.
 
 ### Planejado

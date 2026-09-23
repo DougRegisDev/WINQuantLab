@@ -688,6 +688,16 @@ def test_backtest_does_not_modify_original_dataframe():
                 110.0,
                 120.0,
             ],
+            "high": [
+                105.0,
+                116.0,
+                126.0,
+            ],
+            "low": [
+                99.0,
+                109.0,
+                119.0,
+            ],
             "close": [
                 104.0,
                 115.0,
@@ -719,6 +729,16 @@ def test_backtest_closes_new_position_on_last_candle():
                 105.0,
                 110.0,
             ],
+            "high": [
+                103.0,
+                109.0,
+                116.0,
+            ],
+            "low": [
+                99.0,
+                104.0,
+                109.0,
+            ],
             "close": [
                 102.0,
                 108.0,
@@ -749,6 +769,12 @@ def test_backtest_does_not_trade_with_single_candle():
             "open": [
                 100.0,
             ],
+            "high": [
+                106.0,
+            ],
+            "low": [
+                99.0,
+            ],
             "close": [
                 105.0,
             ],
@@ -770,6 +796,16 @@ def test_backtest_raises_error_when_signal_is_invalid():
                 100.0,
                 105.0,
                 110.0,
+            ],
+            "high": [
+                105.0,
+                110.0,
+                115.0,
+            ],
+            "low": [
+                99.0,
+                104.0,
+                109.0,
             ],
             "close": [
                 104.0,
@@ -799,6 +835,16 @@ def test_backtest_raises_error_when_signal_is_nan():
                 105.0,
                 110.0,
             ],
+            "high": [
+                105.0,
+                110.0,
+                115.0,
+            ],
+            "low": [
+                99.0,
+                104.0,
+                109.0,
+            ],
             "close": [
                 104.0,
                 109.0,
@@ -826,6 +872,16 @@ def test_backtest_works_with_custom_dataframe_index():
                 100.0,
                 110.0,
                 120.0,
+            ],
+            "high": [
+                105.0,
+                116.0,
+                126.0,
+            ],
+            "low": [
+                99.0,
+                109.0,
+                119.0,
             ],
             "close": [
                 104.0,
@@ -862,6 +918,16 @@ def test_backtest_preserves_entry_and_exit_time():
                 100.0,
                 110.0,
                 120.0,
+            ],
+            "high": [
+                105.0,
+                116.0,
+                126.0,
+            ],
+            "low": [
+                99.0,
+                109.0,
+                119.0,
             ],
             "close": [
                 104.0,
@@ -905,6 +971,18 @@ def test_backtest_preserves_exit_time_on_opposite_signal():
                 120.0,
                 125.0,
             ],
+            "high": [
+                105.0,
+                116.0,
+                125.0,
+                130.0,
+            ],
+            "low": [
+                99.0,
+                109.0,
+                119.0,
+                124.0,
+            ],
             "close": [
                 104.0,
                 115.0,
@@ -945,3 +1023,398 @@ def test_backtest_preserves_exit_time_on_opposite_signal():
     assert result[0]["entry_price"] == 110.0
     assert result[0]["exit_price"] == 125.0
     assert result[0]["pnl_points"] == 15.0
+
+
+def test_backtest_calculates_long_mfe_points():
+    df = pd.DataFrame(
+        {
+            "open": [100, 110, 120, 135, 130],
+            "high": [105, 125, 140, 138, 132],
+            "low": [98, 108, 115, 125, 128],
+            "close": [103, 120, 135, 130, 129],
+            "signal": [1, 0, 0, -1, 0],
+        }
+    )
+
+    trades = backtest(df)
+
+    assert trades[0]["mfe_points"] == 30
+
+
+def test_backtest_calculates_long_mae_points():
+    df = pd.DataFrame(
+        {
+            "open": [100, 110, 120, 135, 130],
+            "high": [105, 125, 140, 138, 132],
+            "low": [98, 105, 115, 107, 90],
+            "close": [103, 120, 135, 130, 129],
+            "signal": [1, 0, 0, -1, 0],
+        }
+    )
+
+    trades = backtest(df)
+
+    assert trades[0]["mae_points"] == -5
+
+
+def test_backtest_calculates_short_mfe_points():
+    df = pd.DataFrame(
+        {
+            "open": [150, 140, 130, 115, 120],
+            "high": [155, 145, 135, 125, 150],
+            "low": [145, 125, 110, 105, 90],
+            "close": [148, 130, 115, 120, 125],
+            "signal": [-1, 0, 0, 1, 0],
+        }
+    )
+
+    trades = backtest(df)
+
+    assert trades[0]["mfe_points"] == 35
+
+
+def test_backtest_calculates_short_mae_points():
+    df = pd.DataFrame(
+        {
+            "open": [150, 140, 130, 145, 150],
+            "high": [155, 145, 150, 160, 190],
+            "low": [145, 125, 120, 130, 140],
+            "close": [148, 130, 140, 150, 155],
+            "signal": [-1, 0, 0, 1, 0],
+        }
+    )
+
+    trades = backtest(df)
+
+    assert trades[0]["mae_points"] == -20
+
+
+def test_backtest_raises_error_when_high_is_missing():
+    df = pd.DataFrame(
+        {
+            "open": [100, 110, 120],
+            "low": [98, 108, 115],
+            "close": [103, 115, 118],
+            "signal": [1, 0, 0],
+        }
+    )
+
+    with pytest.raises(
+        ValueError,
+        match="The column 'high' was not found",
+    ):
+        backtest(df)
+
+
+def test_backtest_raises_error_when_low_is_missing():
+    df = pd.DataFrame(
+        {
+            "open": [100, 110, 120],
+            "high": [105, 115, 125],
+            "close": [103, 115, 118],
+            "signal": [1, 0, 0],
+        }
+    )
+
+    with pytest.raises(
+        ValueError,
+        match="The column 'low' was not found",
+    ):
+        backtest(df)
+
+
+def test_backtest_includes_last_candle_in_long_mfe_on_forced_close():
+    df = pd.DataFrame(
+        {
+            "open": [100, 110, 120, 130],
+            "high": [105, 115, 125, 160],
+            "low": [98, 108, 115, 125],
+            "close": [103, 115, 125, 140],
+            "signal": [1, 0, 0, 0],
+        }
+    )
+
+    trades = backtest(df)
+
+    assert trades[0]["mfe_points"] == 50
+
+
+def test_backtest_includes_last_candle_in_long_mae_on_forced_close():
+    df = pd.DataFrame(
+        {
+            "open": [100, 110, 120, 115],
+            "high": [105, 115, 125, 120],
+            "low": [98, 108, 105, 80],
+            "close": [103, 115, 110, 100],
+            "signal": [1, 0, 0, 0],
+        }
+    )
+
+    trades = backtest(df)
+
+    assert trades[0]["mae_points"] == -30
+
+
+def test_backtest_includes_last_candle_in_short_mfe_on_forced_close():
+    df = pd.DataFrame(
+        {
+            "open": [150, 140, 130, 120],
+            "high": [155, 145, 135, 125],
+            "low": [145, 135, 120, 90],
+            "close": [148, 135, 125, 100],
+            "signal": [-1, 0, 0, 0],
+        }
+    )
+
+    trades = backtest(df)
+
+    assert trades[0]["mfe_points"] == 50
+
+
+def test_backtest_includes_last_candle_in_short_mae_on_forced_close():
+    df = pd.DataFrame(
+        {
+            "open": [150, 140, 145, 150],
+            "high": [155, 145, 150, 180],
+            "low": [145, 135, 130, 140],
+            "close": [148, 140, 145, 170],
+            "signal": [-1, 0, 0, 0],
+        }
+    )
+
+    trades = backtest(df)
+
+    assert trades[0]["mae_points"] == -40
+
+
+def test_backtest_records_long_favorable_price():
+    df = pd.DataFrame(
+        {
+            "open": [100, 110, 120, 135, 130],
+            "high": [105, 125, 140, 138, 200],
+            "low": [98, 108, 115, 125, 128],
+            "close": [103, 120, 135, 130, 129],
+            "signal": [1, 0, 0, -1, 0],
+        }
+    )
+
+    trades = backtest(df)
+
+    assert trades[0]["favorable_price"] == 140
+
+
+def test_backtest_records_long_adverse_price():
+    df = pd.DataFrame(
+        {
+            "open": [100, 110, 120, 135, 130],
+            "high": [105, 125, 140, 138, 132],
+            "low": [98, 105, 115, 107, 80],
+            "close": [103, 120, 135, 130, 129],
+            "signal": [1, 0, 0, -1, 0],
+        }
+    )
+
+    trades = backtest(df)
+
+    assert trades[0]["adverse_price"] == 105
+
+
+def test_backtest_records_short_favorable_price():
+    df = pd.DataFrame(
+        {
+            "open": [150, 140, 130, 115, 120],
+            "high": [155, 145, 135, 125, 150],
+            "low": [145, 125, 110, 105, 80],
+            "close": [148, 130, 115, 120, 125],
+            "signal": [-1, 0, 0, 1, 0],
+        }
+    )
+
+    trades = backtest(df)
+
+    assert trades[0]["favorable_price"] == 105
+
+
+def test_backtest_records_short_adverse_price():
+    df = pd.DataFrame(
+        {
+            "open": [150, 140, 130, 145, 150],
+            "high": [155, 145, 150, 160, 200],
+            "low": [145, 125, 120, 130, 140],
+            "close": [148, 130, 140, 150, 155],
+            "signal": [-1, 0, 0, 1, 0],
+        }
+    )
+
+    trades = backtest(df)
+
+    assert trades[0]["adverse_price"] == 160
+
+
+def test_backtest_records_long_mfe_index():
+    df = pd.DataFrame(
+        {
+            "open": [100, 110, 120, 135, 130],
+            "high": [105, 125, 140, 138, 200],
+            "low": [98, 108, 115, 125, 80],
+            "close": [103, 120, 135, 130, 129],
+            "signal": [1, 0, 0, -1, 0],
+        }
+    )
+
+    trades = backtest(df)
+
+    assert trades[0]["mfe_index"] == 2
+
+
+def test_backtest_records_long_mae_index():
+    df = pd.DataFrame(
+        {
+            "open": [100, 110, 120, 135, 130],
+            "high": [105, 125, 140, 138, 200],
+            "low": [98, 105, 115, 107, 80],
+            "close": [103, 120, 135, 130, 129],
+            "signal": [1, 0, 0, -1, 0],
+        }
+    )
+
+    trades = backtest(df)
+
+    assert trades[0]["mae_index"] == 1
+
+
+def test_backtest_records_short_mfe_index():
+    df = pd.DataFrame(
+        {
+            "open": [150, 140, 130, 115, 120],
+            "high": [155, 145, 135, 125, 150],
+            "low": [145, 125, 110, 105, 80],
+            "close": [148, 130, 115, 120, 125],
+            "signal": [-1, 0, 0, 1, 0],
+        }
+    )
+
+    trades = backtest(df)
+
+    assert trades[0]["mfe_index"] == 3
+
+
+def test_backtest_records_short_mae_index():
+    df = pd.DataFrame(
+        {
+            "open": [150, 140, 130, 145, 150],
+            "high": [155, 145, 150, 160, 200],
+            "low": [145, 125, 120, 130, 140],
+            "close": [148, 130, 140, 150, 155],
+            "signal": [-1, 0, 0, 1, 0],
+        }
+    )
+
+    trades = backtest(df)
+
+    assert trades[0]["mae_index"] == 3
+
+
+def test_backtest_records_first_occurrence_of_long_mfe_index():
+    df = pd.DataFrame(
+        {
+            "open": [100, 110, 120, 130, 135],
+            "high": [105, 140, 140, 135, 200],
+            "low": [98, 108, 115, 125, 80],
+            "close": [103, 120, 130, 132, 134],
+            "signal": [1, 0, 0, -1, 0],
+        }
+    )
+
+    trades = backtest(df)
+
+    assert trades[0]["favorable_price"] == 140
+    assert trades[0]["mfe_index"] == 1
+
+
+def test_backtest_records_win_outcome():
+    df = pd.DataFrame(
+        {
+            "open": [100, 110, 120],
+            "high": [105, 125, 135],
+            "low": [98, 108, 115],
+            "close": [103, 120, 130],
+            "signal": [1, 0, 0],
+        }
+    )
+
+    trades = backtest(df)
+
+    assert trades[0]["pnl_points"] == 20
+    assert trades[0]["outcome"] == "win"
+
+
+def test_backtest_records_loss_outcome_despite_favorable_excursion():
+    df = pd.DataFrame(
+        {
+            "open": [100, 110, 130, 105],
+            "high": [105, 135, 150, 110],
+            "low": [98, 108, 125, 100],
+            "close": [103, 130, 140, 105],
+            "signal": [1, 0, 0, 0],
+        }
+    )
+
+    trades = backtest(df)
+
+    assert trades[0]["mfe_points"] == 40
+    assert trades[0]["pnl_points"] == -5
+    assert trades[0]["outcome"] == "loss"
+
+
+def test_backtest_records_even_outcome():
+    df = pd.DataFrame(
+        {
+            "open": [100, 110, 120],
+            "high": [105, 125, 130],
+            "low": [98, 105, 108],
+            "close": [103, 120, 110],
+            "signal": [1, 0, 0],
+        }
+    )
+
+    trades = backtest(df)
+
+    assert trades[0]["pnl_points"] == 0
+    assert trades[0]["outcome"] == "even"
+
+
+def test_backtest_records_duration_candles_on_opposite_signal_exit():
+    df = pd.DataFrame(
+        {
+            "open": [100, 110, 120, 130, 125],
+            "high": [105, 115, 125, 135, 130],
+            "low": [98, 108, 118, 128, 120],
+            "close": [103, 115, 125, 132, 123],
+            "signal": [1, 0, 0, -1, 0],
+        }
+    )
+
+    trades = backtest(df)
+
+    assert trades[0]["entry_index"] == 1
+    assert trades[0]["exit_index"] == 4
+    assert trades[0]["duration_candles"] == 3
+
+
+def test_backtest_records_duration_candles_on_forced_close():
+    df = pd.DataFrame(
+        {
+            "open": [100, 110, 120, 130],
+            "high": [105, 115, 125, 135],
+            "low": [98, 108, 118, 128],
+            "close": [103, 115, 125, 132],
+            "signal": [1, 0, 0, 0],
+        }
+    )
+
+    trades = backtest(df)
+
+    assert trades[0]["entry_index"] == 1
+    assert trades[0]["exit_index"] == 3
+    assert trades[0]["duration_candles"] == 3

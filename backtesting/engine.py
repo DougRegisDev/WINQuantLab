@@ -17,11 +17,120 @@ def _calculate_pnl_points(
     return entry_price - exit_price
 
 
+def _calculate_long_mfe(
+    position: dict,
+    df: pd.DataFrame,
+    last_active_index: int,
+) -> float:
+    """Calculate maximum favorable excursion for a long position."""
+    entry_index = position["entry_index"]
+    entry_price = position["entry_price"]
+
+    active_highs = df["high"].iloc[
+        entry_index: last_active_index + 1
+    ]
+
+    highest_high = active_highs.max()
+    highest_high_position = active_highs.to_numpy().argmax()
+
+    position["favorable_price"] = highest_high
+    position["mfe_index"] = (
+        entry_index + highest_high_position
+    )
+
+    return max(
+        0,
+        highest_high - entry_price,
+    )
+
+
+def _calculate_long_mae(
+    position: dict,
+    df: pd.DataFrame,
+    last_active_index: int,
+) -> float:
+    """Calculate maximum adverse excursion for a long position."""
+    entry_index = position["entry_index"]
+    entry_price = position["entry_price"]
+
+    active_lows = df["low"].iloc[
+        entry_index: last_active_index + 1
+    ]
+
+    lowest_low = active_lows.min()
+    lowest_low_position = active_lows.to_numpy().argmin()
+
+    position["adverse_price"] = lowest_low
+    position["mae_index"] = (
+        entry_index + lowest_low_position
+    )
+
+    return min(
+        0,
+        lowest_low - entry_price,
+    )
+
+
+def _calculate_short_mfe(
+    position: dict,
+    df: pd.DataFrame,
+    last_active_index: int,
+) -> float:
+    """Calculate maximum favorable excursion for a short position."""
+    entry_index = position["entry_index"]
+    entry_price = position["entry_price"]
+
+    active_lows = df["low"].iloc[
+        entry_index: last_active_index + 1
+    ]
+
+    lowest_low = active_lows.min()
+    lowest_low_position = active_lows.to_numpy().argmin()
+
+    position["favorable_price"] = lowest_low
+    position["mfe_index"] = (
+        entry_index + lowest_low_position
+    )
+
+    return max(
+        0,
+        entry_price - lowest_low,
+    )
+
+
+def _calculate_short_mae(
+    position: dict,
+    df: pd.DataFrame,
+    last_active_index: int,
+) -> float:
+    """Calculate maximum adverse excursion for a short position."""
+    entry_index = position["entry_index"]
+    entry_price = position["entry_price"]
+
+    active_highs = df["high"].iloc[
+        entry_index: last_active_index + 1
+    ]
+
+    highest_high = active_highs.max()
+    highest_high_position = active_highs.to_numpy().argmax()
+
+    position["adverse_price"] = highest_high
+    position["mae_index"] = (
+        entry_index + highest_high_position
+    )
+
+    return min(
+        0,
+        entry_price - highest_high,
+    )
+
+
 def _close_position(
     position: dict,
     exit_index: int,
     exit_price: float,
     df: pd.DataFrame,
+    last_active_index: int,
 ) -> dict:
     """Close an open position and calculate its result."""
     position["exit_index"] = exit_index
@@ -35,6 +144,43 @@ def _close_position(
         entry_price=position["entry_price"],
         exit_price=exit_price,
     )
+
+    if position["pnl_points"] > 0:
+        position["outcome"] = "win"
+    elif position["pnl_points"] < 0:
+        position["outcome"] = "loss"
+    else:
+        position["outcome"] = "even"
+
+    position["duration_candles"] = (
+        last_active_index - position["entry_index"] + 1
+    )
+
+    if position["direction"] == "long":
+        position["mfe_points"] = _calculate_long_mfe(
+            position=position,
+            df=df,
+            last_active_index=last_active_index,
+        )
+
+        position["mae_points"] = _calculate_long_mae(
+            position=position,
+            df=df,
+            last_active_index=last_active_index,
+        )
+
+    elif position["direction"] == "short":
+        position["mfe_points"] = _calculate_short_mfe(
+            position=position,
+            df=df,
+            last_active_index=last_active_index,
+        )
+
+        position["mae_points"] = _calculate_short_mae(
+            position=position,
+            df=df,
+            last_active_index=last_active_index,
+        )
 
     return position
 
@@ -61,6 +207,8 @@ def backtest(df: pd.DataFrame) -> list:
     """
     required_columns = (
         "open",
+        "high",
+        "low",
         "close",
         "signal",
     )
@@ -117,6 +265,7 @@ def backtest(df: pd.DataFrame) -> list:
                 exit_index=next_index,
                 exit_price=df["open"].iloc[next_index],
                 df=df,
+                last_active_index=index,
             )
 
             trades.append(trade)
@@ -132,6 +281,7 @@ def backtest(df: pd.DataFrame) -> list:
                 exit_index=next_index,
                 exit_price=df["open"].iloc[next_index],
                 df=df,
+                last_active_index=index,
             )
 
             trades.append(trade)
@@ -143,6 +293,7 @@ def backtest(df: pd.DataFrame) -> list:
             exit_index=len(df) - 1,
             exit_price=df["close"].iloc[-1],
             df=df,
+            last_active_index=len(df) - 1,
         )
 
         trades.append(trade)
