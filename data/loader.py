@@ -19,7 +19,10 @@ def validate_file_exists(file_path: Path) -> None:
         )
 
 
-def read_csv(file_path: Path) -> pd.DataFrame:
+def read_csv(
+    file_path: Path,
+    header: int | None = 0,
+) -> pd.DataFrame:
     """
     Lê um arquivo CSV utilizando a configuração padrão do projeto.
     """
@@ -28,10 +31,14 @@ def read_csv(file_path: Path) -> pd.DataFrame:
         file_path,
         sep=DEFAULT_SEPARATOR,
         decimal=DEFAULT_DECIMAL,
+        header=header,
     )
 
 
-def load_data(file_path: str | Path) -> pd.DataFrame:
+def load_data(
+    file_path: str | Path,
+    header: int | None = 0,
+) -> pd.DataFrame:
     """
     Carrega os dados do mercado.
     """
@@ -40,6 +47,9 @@ def load_data(file_path: str | Path) -> pd.DataFrame:
 
     validate_file_exists(path)
 
-    market_data = read_csv(path)
+    market_data = read_csv(
+        path,
+        header=header,
+    )
 
     return market_data
