@@ -1023,3 +1023,189 @@ def test_create_period_summary_calculates_excursion_percentiles():
     assert summary["mae_p25"] == -300.0
     assert summary["mae_p50"] == -200.0
     assert summary["mae_p75"] == -100.0
+
+
+def test_create_period_summary_calculates_average_trade_duration():
+    session_results = [
+        {
+            "summary": {
+                "candles": 100,
+                "trades": 2,
+            },
+            "trades": [
+                {
+                    "mfe_points": 100.0,
+                    "mae_points": -50.0,
+                    "duration_candles": 10,
+                },
+                {
+                    "mfe_points": 200.0,
+                    "mae_points": -100.0,
+                    "duration_candles": 20,
+                },
+            ],
+        },
+        {
+            "summary": {
+                "candles": 110,
+                "trades": 1,
+            },
+            "trades": [
+                {
+                    "mfe_points": 300.0,
+                    "mae_points": -150.0,
+                    "duration_candles": 30,
+                },
+            ],
+        },
+    ]
+
+    summary = create_period_summary(
+        session_results
+    )
+
+    assert summary["average_duration_candles"] == 20.0
+
+
+def test_create_period_summary_calculates_median_trade_duration():
+    session_results = [
+        {
+            "summary": {
+                "candles": 100,
+                "trades": 2,
+            },
+            "trades": [
+                {
+                    "mfe_points": 100.0,
+                    "mae_points": -50.0,
+                    "duration_candles": 5,
+                },
+                {
+                    "mfe_points": 200.0,
+                    "mae_points": -100.0,
+                    "duration_candles": 10,
+                },
+            ],
+        },
+        {
+            "summary": {
+                "candles": 110,
+                "trades": 2,
+            },
+            "trades": [
+                {
+                    "mfe_points": 300.0,
+                    "mae_points": -150.0,
+                    "duration_candles": 20,
+                },
+                {
+                    "mfe_points": 400.0,
+                    "mae_points": -200.0,
+                    "duration_candles": 100,
+                },
+            ],
+        },
+    ]
+
+    summary = create_period_summary(
+        session_results
+    )
+
+    assert summary["median_duration_candles"] == 15.0
+
+
+def test_create_period_summary_calculates_duration_percentiles():
+    session_results = [
+        {
+            "summary": {
+                "candles": 100,
+                "trades": 2,
+            },
+            "trades": [
+                {
+                    "mfe_points": 100.0,
+                    "mae_points": -50.0,
+                    "duration_candles": 10,
+                },
+                {
+                    "mfe_points": 200.0,
+                    "mae_points": -100.0,
+                    "duration_candles": 20,
+                },
+            ],
+        },
+        {
+            "summary": {
+                "candles": 110,
+                "trades": 3,
+            },
+            "trades": [
+                {
+                    "mfe_points": 300.0,
+                    "mae_points": -150.0,
+                    "duration_candles": 30,
+                },
+                {
+                    "mfe_points": 400.0,
+                    "mae_points": -200.0,
+                    "duration_candles": 40,
+                },
+                {
+                    "mfe_points": 500.0,
+                    "mae_points": -250.0,
+                    "duration_candles": 50,
+                },
+            ],
+        },
+    ]
+
+    summary = create_period_summary(
+        session_results
+    )
+
+    assert summary["duration_p25"] == 20.0
+    assert summary["duration_p50"] == 30.0
+    assert summary["duration_p75"] == 40.0
+
+
+def test_create_period_summary_returns_zero_statistics_without_trades():
+    session_results = [
+        {
+            "summary": {
+                "candles": 100,
+                "trades": 0,
+            },
+            "trades": [],
+        },
+        {
+            "summary": {
+                "candles": 110,
+                "trades": 0,
+            },
+            "trades": [],
+        },
+    ]
+
+    summary = create_period_summary(
+        session_results
+    )
+
+    assert summary["average_mfe_points"] == 0.0
+    assert summary["average_mae_points"] == 0.0
+    assert summary["median_mfe_points"] == 0.0
+    assert summary["median_mae_points"] == 0.0
+
+    assert summary["average_duration_candles"] == 0.0
+    assert summary["median_duration_candles"] == 0.0
+
+    assert summary["mfe_p25"] == 0.0
+    assert summary["mfe_p50"] == 0.0
+    assert summary["mfe_p75"] == 0.0
+
+    assert summary["mae_p25"] == 0.0
+    assert summary["mae_p50"] == 0.0
+    assert summary["mae_p75"] == 0.0
+
+    assert summary["duration_p25"] == 0.0
+    assert summary["duration_p50"] == 0.0
+    assert summary["duration_p75"] == 0.0

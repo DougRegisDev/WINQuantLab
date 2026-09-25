@@ -206,6 +206,12 @@ def create_period_summary(
             for trade in period_trades
         ]
 
+        duration_values = [
+            trade["duration_candles"]
+            for trade in period_trades
+            if "duration_candles" in trade
+        ]
+
         average_mfe_points = (
             sum(mfe_values) / len(mfe_values)
         )
@@ -221,6 +227,37 @@ def create_period_summary(
         median_mae_points = median(
             mae_values
         )
+
+        if duration_values:
+            average_duration_candles = (
+                sum(duration_values)
+                / len(duration_values)
+            )
+
+            median_duration_candles = median(
+                duration_values
+            )
+
+            duration_series = pd.Series(
+                duration_values,
+                dtype=float,
+            )
+
+            duration_p25 = duration_series.quantile(
+                0.25
+            )
+            duration_p50 = duration_series.quantile(
+                0.50
+            )
+            duration_p75 = duration_series.quantile(
+                0.75
+            )
+        else:
+            average_duration_candles = 0.0
+            median_duration_candles = 0.0
+            duration_p25 = 0.0
+            duration_p50 = 0.0
+            duration_p75 = 0.0
 
         mfe_series = pd.Series(
             mfe_values,
@@ -246,6 +283,12 @@ def create_period_summary(
         median_mfe_points = 0.0
         median_mae_points = 0.0
 
+        average_duration_candles = 0.0
+        median_duration_candles = 0.0
+        duration_p25 = 0.0
+        duration_p50 = 0.0
+        duration_p75 = 0.0
+
         mfe_p25 = 0.0
         mfe_p50 = 0.0
         mfe_p75 = 0.0
@@ -270,12 +313,17 @@ def create_period_summary(
         "average_mae_points": average_mae_points,
         "median_mfe_points": median_mfe_points,
         "median_mae_points": median_mae_points,
+        "average_duration_candles": average_duration_candles,
+        "median_duration_candles": median_duration_candles,
         "mfe_p25": mfe_p25,
         "mfe_p50": mfe_p50,
         "mfe_p75": mfe_p75,
         "mae_p25": mae_p25,
         "mae_p50": mae_p50,
         "mae_p75": mae_p75,
+        "duration_p25": duration_p25,
+        "duration_p50": duration_p50,
+        "duration_p75": duration_p75,
     }
 
 

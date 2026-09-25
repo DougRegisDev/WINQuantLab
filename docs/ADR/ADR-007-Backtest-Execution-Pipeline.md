@@ -674,3 +674,17 @@ A implementação continua seguindo o princípio:
 O WINQuantLab mede.
 
 O usuário interpreta.
+
+### Trade Duration Statistics
+
+O resumo do periodo tambem consolida a duracao dos trades, utilizando o campo duration_candles produzido pelo backtesting.
+
+As estatisticas atualmente disponiveis sao:
+
+- duracao media em candles;
+- duracao mediana em candles;
+- percentil P25 da duracao;
+- percentil P50 da duracao;
+- percentil P75 da duracao.
+
+Periodos sem trades retornam zero para as estatisticas de excursao e duracao.
