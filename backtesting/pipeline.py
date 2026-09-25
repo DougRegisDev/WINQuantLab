@@ -5,6 +5,7 @@ Pipeline de execução de backtests multi-sessão.
 from __future__ import annotations
 
 from collections.abc import Callable
+from statistics import median
 
 import pandas as pd
 
@@ -127,6 +128,154 @@ def _create_session_summary(
         "mae_points": mae_points,
         "average_mfe_points": average_mfe_points,
         "average_mae_points": average_mae_points,
+    }
+
+
+def create_period_summary(
+    session_results: list[dict],
+) -> dict:
+    """
+    Consolida informações de múltiplas sessões.
+    """
+
+    sessions = len(session_results)
+
+    sessions_with_trades = sum(
+        result["summary"]["trades"] > 0
+        for result in session_results
+    )
+
+    sessions_without_trades = (
+        sessions - sessions_with_trades
+    )
+
+    candles = sum(
+        result["summary"]["candles"]
+        for result in session_results
+    )
+
+    trades = sum(
+        result["summary"]["trades"]
+        for result in session_results
+    )
+
+    longs = sum(
+        result["summary"].get("longs", 0)
+        for result in session_results
+    )
+
+    shorts = sum(
+        result["summary"].get("shorts", 0)
+        for result in session_results
+    )
+
+    wins = sum(
+        result["summary"].get("wins", 0)
+        for result in session_results
+    )
+
+    losses = sum(
+        result["summary"].get("losses", 0)
+        for result in session_results
+    )
+
+    evens = sum(
+        result["summary"].get("evens", 0)
+        for result in session_results
+    )
+
+    pnl_points = sum(
+        result["summary"].get("pnl_points", 0.0)
+        for result in session_results
+    )
+
+    period_trades = [
+        trade
+        for result in session_results
+        for trade in result.get("trades", [])
+    ]
+
+    if period_trades:
+        mfe_values = [
+            trade["mfe_points"]
+            for trade in period_trades
+        ]
+
+        mae_values = [
+            trade["mae_points"]
+            for trade in period_trades
+        ]
+
+        average_mfe_points = (
+            sum(mfe_values) / len(mfe_values)
+        )
+
+        average_mae_points = (
+            sum(mae_values) / len(mae_values)
+        )
+
+        median_mfe_points = median(
+            mfe_values
+        )
+
+        median_mae_points = median(
+            mae_values
+        )
+
+        mfe_series = pd.Series(
+            mfe_values,
+            dtype=float,
+        )
+
+        mae_series = pd.Series(
+            mae_values,
+            dtype=float,
+        )
+
+        mfe_p25 = mfe_series.quantile(0.25)
+        mfe_p50 = mfe_series.quantile(0.50)
+        mfe_p75 = mfe_series.quantile(0.75)
+
+        mae_p25 = mae_series.quantile(0.25)
+        mae_p50 = mae_series.quantile(0.50)
+        mae_p75 = mae_series.quantile(0.75)
+
+    else:
+        average_mfe_points = 0.0
+        average_mae_points = 0.0
+        median_mfe_points = 0.0
+        median_mae_points = 0.0
+
+        mfe_p25 = 0.0
+        mfe_p50 = 0.0
+        mfe_p75 = 0.0
+
+        mae_p25 = 0.0
+        mae_p50 = 0.0
+        mae_p75 = 0.0
+
+    return {
+        "sessions": sessions,
+        "sessions_with_trades": sessions_with_trades,
+        "sessions_without_trades": sessions_without_trades,
+        "candles": candles,
+        "trades": trades,
+        "longs": longs,
+        "shorts": shorts,
+        "wins": wins,
+        "losses": losses,
+        "evens": evens,
+        "pnl_points": pnl_points,
+        "average_mfe_points": average_mfe_points,
+        "average_mae_points": average_mae_points,
+        "median_mfe_points": median_mfe_points,
+        "median_mae_points": median_mae_points,
+        "mfe_p25": mfe_p25,
+        "mfe_p50": mfe_p50,
+        "mfe_p75": mfe_p75,
+        "mae_p25": mae_p25,
+        "mae_p50": mae_p50,
+        "mae_p75": mae_p75,
     }
 
 

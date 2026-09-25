@@ -610,3 +610,67 @@ O WINQuantLab mede.
 O usuário interpreta.
 
 O gerenciamento de risco permanece uma decisão humana.
+
+---
+
+## Implementation Status
+
+A primeira etapa do pipeline multi-sessão foi implementada em
+`backtesting/pipeline.py`.
+
+O pipeline atualmente:
+
+- recebe dados de mercado normalizados;
+- separa automaticamente os dados por data de sessão;
+- ordena os candles de cada sessão por `datetime`;
+- reinicia o índice de cada sessão;
+- executa a estratégia independentemente em cada sessão;
+- executa o backtesting independentemente em cada sessão;
+- associa cada trade à sessão correspondente;
+- preserva sessões sem trades;
+- produz resumos individuais por sessão;
+- consolida os resultados no resumo do período.
+
+O resumo de sessão atualmente inclui:
+
+- quantidade de candles;
+- quantidade de trades;
+- trades LONG e SHORT;
+- trades positivos, negativos e zerados;
+- PnL total em pontos;
+- MFE total;
+- MAE total;
+- MFE médio;
+- MAE médio.
+
+O resumo do período atualmente inclui:
+
+- sessões analisadas;
+- sessões com trades;
+- sessões sem trades;
+- candles analisados;
+- trades totais;
+- trades LONG e SHORT;
+- trades positivos, negativos e zerados;
+- PnL total em pontos;
+- MFE médio;
+- MAE médio;
+- MFE mediano;
+- MAE mediano;
+- P25, P50 e P75 de MFE;
+- P25, P50 e P75 de MAE.
+
+As estatísticas do período são calculadas a partir dos trades individuais
+consolidados, e não a partir de médias das sessões. Dessa forma, cada trade
+possui o mesmo peso estatístico independentemente da quantidade de operações
+existente em cada sessão.
+
+Estatísticas adicionais previstas nesta ADR, como mínimo, máximo, duração,
+segmentação por resultado e frequências de excursão, permanecem para
+implementação incremental posterior.
+
+A implementação continua seguindo o princípio:
+
+O WINQuantLab mede.
+
+O usuário interpreta.

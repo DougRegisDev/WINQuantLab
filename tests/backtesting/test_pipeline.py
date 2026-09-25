@@ -1,6 +1,10 @@
-import pandas as pd
+﻿import pandas as pd
 
-from backtesting.pipeline import run_sessions, split_sessions
+from backtesting.pipeline import (
+    create_period_summary,
+    run_sessions,
+    split_sessions,
+)
 
 
 def test_split_sessions_separates_market_data_by_date():
@@ -753,3 +757,269 @@ def test_session_summary_calculates_average_mfe_and_mae_points():
 
     assert second_summary["average_mfe_points"] == 0.0
     assert second_summary["average_mae_points"] == 0.0
+
+
+def test_create_period_summary_counts_sessions_and_trades():
+    session_results = [
+        {
+            "summary": {
+                "session": pd.Timestamp("2024-09-16").date(),
+                "candles": 100,
+                "trades": 2,
+            }
+        },
+        {
+            "summary": {
+                "session": pd.Timestamp("2024-09-17").date(),
+                "candles": 110,
+                "trades": 0,
+            }
+        },
+        {
+            "summary": {
+                "session": pd.Timestamp("2024-09-18").date(),
+                "candles": 105,
+                "trades": 3,
+            }
+        },
+    ]
+
+    summary = create_period_summary(
+        session_results
+    )
+
+    assert summary["sessions"] == 3
+    assert summary["sessions_with_trades"] == 2
+    assert summary["sessions_without_trades"] == 1
+    assert summary["trades"] == 5
+
+
+def test_create_period_summary_consolidates_session_activity():
+    session_results = [
+        {
+            "summary": {
+                "session": pd.Timestamp("2024-09-16").date(),
+                "candles": 100,
+                "trades": 3,
+                "longs": 2,
+                "shorts": 1,
+                "wins": 2,
+                "losses": 1,
+                "evens": 0,
+            }
+        },
+        {
+            "summary": {
+                "session": pd.Timestamp("2024-09-17").date(),
+                "candles": 110,
+                "trades": 0,
+                "longs": 0,
+                "shorts": 0,
+                "wins": 0,
+                "losses": 0,
+                "evens": 0,
+            }
+        },
+        {
+            "summary": {
+                "session": pd.Timestamp("2024-09-18").date(),
+                "candles": 90,
+                "trades": 2,
+                "longs": 1,
+                "shorts": 1,
+                "wins": 0,
+                "losses": 1,
+                "evens": 1,
+            }
+        },
+    ]
+
+    summary = create_period_summary(
+        session_results
+    )
+
+    assert summary["candles"] == 300
+    assert summary["longs"] == 3
+    assert summary["shorts"] == 2
+    assert summary["wins"] == 2
+    assert summary["losses"] == 2
+    assert summary["evens"] == 1
+
+
+def test_create_period_summary_consolidates_pnl_points():
+    session_results = [
+        {
+            "summary": {
+                "session": pd.Timestamp("2024-09-16").date(),
+                "candles": 100,
+                "trades": 2,
+                "pnl_points": 350.0,
+            }
+        },
+        {
+            "summary": {
+                "session": pd.Timestamp("2024-09-17").date(),
+                "candles": 110,
+                "trades": 0,
+                "pnl_points": 0.0,
+            }
+        },
+        {
+            "summary": {
+                "session": pd.Timestamp("2024-09-18").date(),
+                "candles": 105,
+                "trades": 3,
+                "pnl_points": -150.0,
+            }
+        },
+    ]
+
+    summary = create_period_summary(
+        session_results
+    )
+
+    assert summary["pnl_points"] == 200.0
+
+
+def test_create_period_summary_calculates_average_trade_excursions():
+    session_results = [
+        {
+            "summary": {
+                "candles": 100,
+                "trades": 2,
+            },
+            "trades": [
+                {
+                    "mfe_points": 400.0,
+                    "mae_points": -100.0,
+                },
+                {
+                    "mfe_points": 200.0,
+                    "mae_points": -200.0,
+                },
+            ],
+        },
+        {
+            "summary": {
+                "candles": 110,
+                "trades": 0,
+            },
+            "trades": [],
+        },
+        {
+            "summary": {
+                "candles": 105,
+                "trades": 1,
+            },
+            "trades": [
+                {
+                    "mfe_points": 600.0,
+                    "mae_points": -300.0,
+                },
+            ],
+        },
+    ]
+
+    summary = create_period_summary(
+        session_results
+    )
+
+    assert summary["average_mfe_points"] == 400.0
+    assert summary["average_mae_points"] == -200.0
+
+
+def test_create_period_summary_calculates_median_trade_excursions():
+    session_results = [
+        {
+            "summary": {
+                "candles": 100,
+                "trades": 2,
+            },
+            "trades": [
+                {
+                    "mfe_points": 100.0,
+                    "mae_points": -50.0,
+                },
+                {
+                    "mfe_points": 200.0,
+                    "mae_points": -100.0,
+                },
+            ],
+        },
+        {
+            "summary": {
+                "candles": 110,
+                "trades": 2,
+            },
+            "trades": [
+                {
+                    "mfe_points": 300.0,
+                    "mae_points": -150.0,
+                },
+                {
+                    "mfe_points": 2000.0,
+                    "mae_points": -500.0,
+                },
+            ],
+        },
+    ]
+
+    summary = create_period_summary(
+        session_results
+    )
+
+    assert summary["median_mfe_points"] == 250.0
+    assert summary["median_mae_points"] == -125.0
+
+
+def test_create_period_summary_calculates_excursion_percentiles():
+    session_results = [
+        {
+            "summary": {
+                "candles": 100,
+                "trades": 2,
+            },
+            "trades": [
+                {
+                    "mfe_points": 100.0,
+                    "mae_points": -400.0,
+                },
+                {
+                    "mfe_points": 200.0,
+                    "mae_points": -300.0,
+                },
+            ],
+        },
+        {
+            "summary": {
+                "candles": 110,
+                "trades": 3,
+            },
+            "trades": [
+                {
+                    "mfe_points": 300.0,
+                    "mae_points": -200.0,
+                },
+                {
+                    "mfe_points": 400.0,
+                    "mae_points": -100.0,
+                },
+                {
+                    "mfe_points": 500.0,
+                    "mae_points": 0.0,
+                },
+            ],
+        },
+    ]
+
+    summary = create_period_summary(
+        session_results
+    )
+
+    assert summary["mfe_p25"] == 200.0
+    assert summary["mfe_p50"] == 300.0
+    assert summary["mfe_p75"] == 400.0
+
+    assert summary["mae_p25"] == -300.0
+    assert summary["mae_p50"] == -200.0
+    assert summary["mae_p75"] == -100.0

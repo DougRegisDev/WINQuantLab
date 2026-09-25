@@ -10,6 +10,22 @@ O formato segue o padrão **Keep a Changelog** e utiliza **Versionamento Semânt
 
 ### Adicionado
 
+#### Backtesting Multi-Sessao
+
+- Implementado pipeline de execucao de backtests multi-sessao.
+- Implementada separacao automatica dos dados por sessao.
+- Implementada execucao independente da estrategia e do backtesting por sessao.
+- Implementada associacao dos trades as respectivas sessoes.
+- Implementada preservacao de sessoes sem trades.
+- Implementado resumo estatistico por sessao.
+- Implementada consolidacao dos resultados no resumo do periodo.
+- Implementadas contagens de sessoes, candles, trades, direcoes e resultados.
+- Implementada consolidacao do PnL em pontos.
+- Implementado calculo de MFE e MAE medios a partir dos trades individuais.
+- Implementado calculo de MFE e MAE medianos.
+- Implementados percentis P25, P50 e P75 para MFE e MAE.
+
+
 #### Indicadores de Tendência
 
 - Implementado Average True Range (ATR).
