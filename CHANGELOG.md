@@ -26,6 +26,7 @@ O formato segue o padrão **Keep a Changelog** e utiliza **Versionamento Semânt
 - Implementados percentis P25, P50 e P75 para MFE e MAE.
 - Implementadas estatisticas de duracao dos trades: media, mediana e percentis P25, P50 e P75.
 - Implementados valores minimo e maximo para as distribuicoes de MFE e MAE.
+- Implementada segmentacao por resultado dos trades, com contagem e medias de MFE, MAE e duracao para win, loss e even.
 
 
 #### Indicadores de Tendência

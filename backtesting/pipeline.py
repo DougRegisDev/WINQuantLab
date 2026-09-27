@@ -131,6 +131,30 @@ def _create_session_summary(
     }
 
 
+def _calculate_outcome_average(
+    period_trades: list[dict],
+    outcome: str,
+    field: str,
+) -> float:
+    """
+    Calcula a média de um campo para um resultado específico.
+    """
+
+    values = [
+        trade[field]
+        for trade in period_trades
+        if (
+            trade.get("outcome") == outcome
+            and field in trade
+        )
+    ]
+
+    if not values:
+        return 0.0
+
+    return sum(values) / len(values)
+
+
 def create_period_summary(
     session_results: list[dict],
 ) -> dict:
@@ -194,6 +218,48 @@ def create_period_summary(
         for result in session_results
         for trade in result.get("trades", [])
     ]
+
+    outcome_trades = {
+        "win": sum(
+            trade.get("outcome") == "win"
+            for trade in period_trades
+        ),
+        "loss": sum(
+            trade.get("outcome") == "loss"
+            for trade in period_trades
+        ),
+        "even": sum(
+            trade.get("outcome") == "even"
+            for trade in period_trades
+        ),
+    }
+
+    outcome_average_mfe = {
+        outcome: _calculate_outcome_average(
+            period_trades,
+            outcome,
+            "mfe_points",
+        )
+        for outcome in ("win", "loss", "even")
+    }
+
+    outcome_average_mae = {
+        outcome: _calculate_outcome_average(
+            period_trades,
+            outcome,
+            "mae_points",
+        )
+        for outcome in ("win", "loss", "even")
+    }
+
+    outcome_average_duration = {
+        outcome: _calculate_outcome_average(
+            period_trades,
+            outcome,
+            "duration_candles",
+        )
+        for outcome in ("win", "loss", "even")
+    }
 
     if period_trades:
         mfe_values = [
@@ -320,6 +386,10 @@ def create_period_summary(
         "losses": losses,
         "evens": evens,
         "pnl_points": pnl_points,
+        "outcome_trades": outcome_trades,
+        "outcome_average_mfe": outcome_average_mfe,
+        "outcome_average_mae": outcome_average_mae,
+        "outcome_average_duration": outcome_average_duration,
         "average_mfe_points": average_mfe_points,
         "average_mae_points": average_mae_points,
         "median_mfe_points": median_mfe_points,

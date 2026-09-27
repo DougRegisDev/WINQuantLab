@@ -696,3 +696,18 @@ O resumo do periodo tambem registra os valores minimo e maximo observados nas di
 Essas medidas complementam media, mediana e percentis, descrevendo os extremos observados nos trades do periodo.
 
 Periodos sem trades retornam zero para esses valores.
+
+### Outcome Segmentation
+
+O resumo do periodo segmenta os trades pelos resultados win, loss e even.
+
+Para cada resultado, a implementacao atual registra:
+
+- quantidade de trades;
+- MFE medio;
+- MAE medio;
+- duracao media em candles.
+
+Categorias sem trades permanecem representadas e retornam zero para suas medias.
+
+Trades sem determinado campo analitico sao ignorados apenas no calculo da estatistica correspondente.

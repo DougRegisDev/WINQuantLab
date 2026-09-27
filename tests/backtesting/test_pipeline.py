@@ -1256,3 +1256,299 @@ def test_create_period_summary_calculates_excursion_minimums_and_maximums():
 
     assert summary["mae_min"] == -200.0
     assert summary["mae_max"] == -50.0
+
+
+def test_create_period_summary_segments_trades_by_outcome():
+    session_results = [
+        {
+            "summary": {
+                "trades": 3,
+                "candles": 100,
+            },
+            "trades": [
+                {
+                    "outcome": "win",
+                    "mfe_points": 300.0,
+                    "mae_points": -50.0,
+                },
+                {
+                    "outcome": "loss",
+                    "mfe_points": 100.0,
+                    "mae_points": -200.0,
+                },
+                {
+                    "outcome": "win",
+                    "mfe_points": 250.0,
+                    "mae_points": -75.0,
+                },
+            ],
+        },
+        {
+            "summary": {
+                "trades": 2,
+                "candles": 50,
+            },
+            "trades": [
+                {
+                    "outcome": "loss",
+                    "mfe_points": 50.0,
+                    "mae_points": -150.0,
+                },
+                {
+                    "outcome": "even",
+                    "mfe_points": 125.0,
+                    "mae_points": -100.0,
+                },
+            ],
+        },
+    ]
+
+    summary = create_period_summary(
+        session_results
+    )
+
+    assert summary["outcome_trades"]["win"] == 2
+    assert summary["outcome_trades"]["loss"] == 2
+    assert summary["outcome_trades"]["even"] == 1
+
+
+def test_create_period_summary_calculates_average_mfe_by_outcome():
+    session_results = [
+        {
+            "summary": {
+                "trades": 3,
+                "candles": 100,
+            },
+            "trades": [
+                {
+                    "outcome": "win",
+                    "mfe_points": 300.0,
+                    "mae_points": -50.0,
+                },
+                {
+                    "outcome": "win",
+                    "mfe_points": 200.0,
+                    "mae_points": -75.0,
+                },
+                {
+                    "outcome": "loss",
+                    "mfe_points": 100.0,
+                    "mae_points": -200.0,
+                },
+            ],
+        },
+        {
+            "summary": {
+                "trades": 2,
+                "candles": 50,
+            },
+            "trades": [
+                {
+                    "outcome": "loss",
+                    "mfe_points": 50.0,
+                    "mae_points": -150.0,
+                },
+                {
+                    "outcome": "even",
+                    "mfe_points": 120.0,
+                    "mae_points": -100.0,
+                },
+            ],
+        },
+    ]
+
+    summary = create_period_summary(
+        session_results
+    )
+
+    assert (
+        summary["outcome_average_mfe"]["win"]
+        == 250.0
+    )
+    assert (
+        summary["outcome_average_mfe"]["loss"]
+        == 75.0
+    )
+    assert (
+        summary["outcome_average_mfe"]["even"]
+        == 120.0
+    )
+
+
+def test_create_period_summary_calculates_average_mae_by_outcome():
+    session_results = [
+        {
+            "summary": {
+                "trades": 3,
+                "candles": 100,
+            },
+            "trades": [
+                {
+                    "outcome": "win",
+                    "mfe_points": 300.0,
+                    "mae_points": -50.0,
+                },
+                {
+                    "outcome": "win",
+                    "mfe_points": 200.0,
+                    "mae_points": -100.0,
+                },
+                {
+                    "outcome": "loss",
+                    "mfe_points": 100.0,
+                    "mae_points": -300.0,
+                },
+            ],
+        },
+        {
+            "summary": {
+                "trades": 2,
+                "candles": 50,
+            },
+            "trades": [
+                {
+                    "outcome": "loss",
+                    "mfe_points": 50.0,
+                    "mae_points": -200.0,
+                },
+                {
+                    "outcome": "even",
+                    "mfe_points": 120.0,
+                    "mae_points": -125.0,
+                },
+            ],
+        },
+    ]
+
+    summary = create_period_summary(
+        session_results
+    )
+
+    assert (
+        summary["outcome_average_mae"]["win"]
+        == -75.0
+    )
+    assert (
+        summary["outcome_average_mae"]["loss"]
+        == -250.0
+    )
+    assert (
+        summary["outcome_average_mae"]["even"]
+        == -125.0
+    )
+
+
+def test_create_period_summary_returns_zero_for_missing_outcome():
+    session_results = [
+        {
+            "summary": {
+                "trades": 2,
+                "candles": 100,
+            },
+            "trades": [
+                {
+                    "outcome": "win",
+                    "mfe_points": 300.0,
+                    "mae_points": -50.0,
+                },
+                {
+                    "outcome": "win",
+                    "mfe_points": 200.0,
+                    "mae_points": -100.0,
+                },
+            ],
+        },
+    ]
+
+    summary = create_period_summary(
+        session_results
+    )
+
+    assert summary["outcome_trades"]["loss"] == 0
+    assert summary["outcome_trades"]["even"] == 0
+
+    assert (
+        summary["outcome_average_mfe"]["loss"]
+        == 0.0
+    )
+    assert (
+        summary["outcome_average_mfe"]["even"]
+        == 0.0
+    )
+
+    assert (
+        summary["outcome_average_mae"]["loss"]
+        == 0.0
+    )
+    assert (
+        summary["outcome_average_mae"]["even"]
+        == 0.0
+    )
+
+
+def test_create_period_summary_calculates_average_duration_by_outcome():
+    session_results = [
+        {
+            "summary": {
+                "trades": 3,
+                "candles": 100,
+            },
+            "trades": [
+                {
+                    "outcome": "win",
+                    "mfe_points": 300.0,
+                    "mae_points": -50.0,
+                    "duration_candles": 10,
+                },
+                {
+                    "outcome": "win",
+                    "mfe_points": 200.0,
+                    "mae_points": -100.0,
+                    "duration_candles": 20,
+                },
+                {
+                    "outcome": "loss",
+                    "mfe_points": 100.0,
+                    "mae_points": -300.0,
+                    "duration_candles": 30,
+                },
+            ],
+        },
+        {
+            "summary": {
+                "trades": 2,
+                "candles": 50,
+            },
+            "trades": [
+                {
+                    "outcome": "loss",
+                    "mfe_points": 50.0,
+                    "mae_points": -200.0,
+                    "duration_candles": 50,
+                },
+                {
+                    "outcome": "even",
+                    "mfe_points": 120.0,
+                    "mae_points": -125.0,
+                    "duration_candles": 25,
+                },
+            ],
+        },
+    ]
+
+    summary = create_period_summary(
+        session_results
+    )
+
+    assert (
+        summary["outcome_average_duration"]["win"]
+        == 15.0
+    )
+    assert (
+        summary["outcome_average_duration"]["loss"]
+        == 40.0
+    )
+    assert (
+        summary["outcome_average_duration"]["even"]
+        == 25.0
+    )
