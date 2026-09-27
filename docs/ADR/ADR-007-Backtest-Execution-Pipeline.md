@@ -688,3 +688,11 @@ As estatisticas atualmente disponiveis sao:
 - percentil P75 da duracao.
 
 Periodos sem trades retornam zero para as estatisticas de excursao e duracao.
+
+### Excursion Range Statistics
+
+O resumo do periodo tambem registra os valores minimo e maximo observados nas distribuicoes de MFE e MAE.
+
+Essas medidas complementam media, mediana e percentis, descrevendo os extremos observados nos trades do periodo.
+
+Periodos sem trades retornam zero para esses valores.

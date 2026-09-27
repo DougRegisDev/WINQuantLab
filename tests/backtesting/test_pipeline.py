@@ -1209,3 +1209,50 @@ def test_create_period_summary_returns_zero_statistics_without_trades():
     assert summary["duration_p25"] == 0.0
     assert summary["duration_p50"] == 0.0
     assert summary["duration_p75"] == 0.0
+    assert summary["mfe_min"] == 0.0
+    assert summary["mfe_max"] == 0.0
+    assert summary["mae_min"] == 0.0
+    assert summary["mae_max"] == 0.0
+
+
+def test_create_period_summary_calculates_excursion_minimums_and_maximums():
+    session_results = [
+        {
+            "summary": {
+                "trades": 2,
+                "candles": 100,
+            },
+            "trades": [
+                {
+                    "mfe_points": 100.0,
+                    "mae_points": -50.0,
+                },
+                {
+                    "mfe_points": 300.0,
+                    "mae_points": -200.0,
+                },
+            ],
+        },
+        {
+            "summary": {
+                "trades": 1,
+                "candles": 50,
+            },
+            "trades": [
+                {
+                    "mfe_points": 200.0,
+                    "mae_points": -100.0,
+                },
+            ],
+        },
+    ]
+
+    summary = create_period_summary(
+        session_results
+    )
+
+    assert summary["mfe_min"] == 100.0
+    assert summary["mfe_max"] == 300.0
+
+    assert summary["mae_min"] == -200.0
+    assert summary["mae_max"] == -50.0

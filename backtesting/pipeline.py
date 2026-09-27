@@ -228,6 +228,12 @@ def create_period_summary(
             mae_values
         )
 
+        mfe_min = min(mfe_values)
+        mfe_max = max(mfe_values)
+
+        mae_min = min(mae_values)
+        mae_max = max(mae_values)
+
         if duration_values:
             average_duration_candles = (
                 sum(duration_values)
@@ -283,6 +289,11 @@ def create_period_summary(
         median_mfe_points = 0.0
         median_mae_points = 0.0
 
+        mfe_min = 0.0
+        mfe_max = 0.0
+        mae_min = 0.0
+        mae_max = 0.0
+
         average_duration_candles = 0.0
         median_duration_candles = 0.0
         duration_p25 = 0.0
@@ -313,6 +324,10 @@ def create_period_summary(
         "average_mae_points": average_mae_points,
         "median_mfe_points": median_mfe_points,
         "median_mae_points": median_mae_points,
+        "mfe_min": mfe_min,
+        "mfe_max": mfe_max,
+        "mae_min": mae_min,
+        "mae_max": mae_max,
         "average_duration_candles": average_duration_candles,
         "median_duration_candles": median_duration_candles,
         "mfe_p25": mfe_p25,
