@@ -11,6 +11,8 @@ import pandas as pd
 
 from backtesting.engine import backtest
 
+OUTCOMES = ("win", "loss", "even")
+
 
 def _validate_datetime_column(
     market_data: pd.DataFrame,
@@ -131,6 +133,54 @@ def _create_session_summary(
     }
 
 
+def _collect_period_trades(
+    session_results: list[dict],
+) -> list[dict]:
+    """
+    Consolida os trades de todas as sessões.
+    """
+
+    return [
+        trade
+        for result in session_results
+        for trade in result.get("trades", [])
+    ]
+
+
+def _calculate_distribution(
+    values: list[float | int],
+) -> dict:
+    """
+    Calcula estatísticas descritivas de uma distribuição.
+    """
+
+    if not values:
+        return {
+            "average": 0.0,
+            "median": 0.0,
+            "min": 0.0,
+            "max": 0.0,
+            "p25": 0.0,
+            "p50": 0.0,
+            "p75": 0.0,
+        }
+
+    series = pd.Series(
+        values,
+        dtype=float,
+    )
+
+    return {
+        "average": sum(values) / len(values),
+        "median": median(values),
+        "min": min(values),
+        "max": max(values),
+        "p25": series.quantile(0.25),
+        "p50": series.quantile(0.50),
+        "p75": series.quantile(0.75),
+    }
+
+
 def _calculate_outcome_average(
     period_trades: list[dict],
     outcome: str,
@@ -153,6 +203,56 @@ def _calculate_outcome_average(
         return 0.0
 
     return sum(values) / len(values)
+
+
+def _calculate_outcome_analytics(
+    period_trades: list[dict],
+) -> dict:
+    """
+    Calcula métricas segmentadas pelo resultado dos trades.
+    """
+
+    outcome_trades = {
+        outcome: sum(
+            trade.get("outcome") == outcome
+            for trade in period_trades
+        )
+        for outcome in OUTCOMES
+    }
+
+    outcome_average_mfe = {
+        outcome: _calculate_outcome_average(
+            period_trades,
+            outcome,
+            "mfe_points",
+        )
+        for outcome in OUTCOMES
+    }
+
+    outcome_average_mae = {
+        outcome: _calculate_outcome_average(
+            period_trades,
+            outcome,
+            "mae_points",
+        )
+        for outcome in OUTCOMES
+    }
+
+    outcome_average_duration = {
+        outcome: _calculate_outcome_average(
+            period_trades,
+            outcome,
+            "duration_candles",
+        )
+        for outcome in OUTCOMES
+    }
+
+    return {
+        "outcome_trades": outcome_trades,
+        "outcome_average_mfe": outcome_average_mfe,
+        "outcome_average_mae": outcome_average_mae,
+        "outcome_average_duration": outcome_average_duration,
+    }
 
 
 def create_period_summary(
@@ -213,166 +313,41 @@ def create_period_summary(
         for result in session_results
     )
 
-    period_trades = [
-        trade
-        for result in session_results
-        for trade in result.get("trades", [])
+    period_trades = _collect_period_trades(
+        session_results
+    )
+
+    mfe_values = [
+        trade["mfe_points"]
+        for trade in period_trades
     ]
 
-    outcome_trades = {
-        "win": sum(
-            trade.get("outcome") == "win"
-            for trade in period_trades
-        ),
-        "loss": sum(
-            trade.get("outcome") == "loss"
-            for trade in period_trades
-        ),
-        "even": sum(
-            trade.get("outcome") == "even"
-            for trade in period_trades
-        ),
-    }
+    mae_values = [
+        trade["mae_points"]
+        for trade in period_trades
+    ]
 
-    outcome_average_mfe = {
-        outcome: _calculate_outcome_average(
-            period_trades,
-            outcome,
-            "mfe_points",
-        )
-        for outcome in ("win", "loss", "even")
-    }
+    duration_values = [
+        trade["duration_candles"]
+        for trade in period_trades
+        if "duration_candles" in trade
+    ]
 
-    outcome_average_mae = {
-        outcome: _calculate_outcome_average(
-            period_trades,
-            outcome,
-            "mae_points",
-        )
-        for outcome in ("win", "loss", "even")
-    }
+    mfe_statistics = _calculate_distribution(
+        mfe_values
+    )
 
-    outcome_average_duration = {
-        outcome: _calculate_outcome_average(
-            period_trades,
-            outcome,
-            "duration_candles",
-        )
-        for outcome in ("win", "loss", "even")
-    }
+    mae_statistics = _calculate_distribution(
+        mae_values
+    )
 
-    if period_trades:
-        mfe_values = [
-            trade["mfe_points"]
-            for trade in period_trades
-        ]
+    duration_statistics = _calculate_distribution(
+        duration_values
+    )
 
-        mae_values = [
-            trade["mae_points"]
-            for trade in period_trades
-        ]
-
-        duration_values = [
-            trade["duration_candles"]
-            for trade in period_trades
-            if "duration_candles" in trade
-        ]
-
-        average_mfe_points = (
-            sum(mfe_values) / len(mfe_values)
-        )
-
-        average_mae_points = (
-            sum(mae_values) / len(mae_values)
-        )
-
-        median_mfe_points = median(
-            mfe_values
-        )
-
-        median_mae_points = median(
-            mae_values
-        )
-
-        mfe_min = min(mfe_values)
-        mfe_max = max(mfe_values)
-
-        mae_min = min(mae_values)
-        mae_max = max(mae_values)
-
-        if duration_values:
-            average_duration_candles = (
-                sum(duration_values)
-                / len(duration_values)
-            )
-
-            median_duration_candles = median(
-                duration_values
-            )
-
-            duration_series = pd.Series(
-                duration_values,
-                dtype=float,
-            )
-
-            duration_p25 = duration_series.quantile(
-                0.25
-            )
-            duration_p50 = duration_series.quantile(
-                0.50
-            )
-            duration_p75 = duration_series.quantile(
-                0.75
-            )
-        else:
-            average_duration_candles = 0.0
-            median_duration_candles = 0.0
-            duration_p25 = 0.0
-            duration_p50 = 0.0
-            duration_p75 = 0.0
-
-        mfe_series = pd.Series(
-            mfe_values,
-            dtype=float,
-        )
-
-        mae_series = pd.Series(
-            mae_values,
-            dtype=float,
-        )
-
-        mfe_p25 = mfe_series.quantile(0.25)
-        mfe_p50 = mfe_series.quantile(0.50)
-        mfe_p75 = mfe_series.quantile(0.75)
-
-        mae_p25 = mae_series.quantile(0.25)
-        mae_p50 = mae_series.quantile(0.50)
-        mae_p75 = mae_series.quantile(0.75)
-
-    else:
-        average_mfe_points = 0.0
-        average_mae_points = 0.0
-        median_mfe_points = 0.0
-        median_mae_points = 0.0
-
-        mfe_min = 0.0
-        mfe_max = 0.0
-        mae_min = 0.0
-        mae_max = 0.0
-
-        average_duration_candles = 0.0
-        median_duration_candles = 0.0
-        duration_p25 = 0.0
-        duration_p50 = 0.0
-        duration_p75 = 0.0
-
-        mfe_p25 = 0.0
-        mfe_p50 = 0.0
-        mfe_p75 = 0.0
-
-        mae_p25 = 0.0
-        mae_p50 = 0.0
-        mae_p75 = 0.0
+    outcome_analytics = _calculate_outcome_analytics(
+        period_trades
+    )
 
     return {
         "sessions": sessions,
@@ -386,29 +361,26 @@ def create_period_summary(
         "losses": losses,
         "evens": evens,
         "pnl_points": pnl_points,
-        "outcome_trades": outcome_trades,
-        "outcome_average_mfe": outcome_average_mfe,
-        "outcome_average_mae": outcome_average_mae,
-        "outcome_average_duration": outcome_average_duration,
-        "average_mfe_points": average_mfe_points,
-        "average_mae_points": average_mae_points,
-        "median_mfe_points": median_mfe_points,
-        "median_mae_points": median_mae_points,
-        "mfe_min": mfe_min,
-        "mfe_max": mfe_max,
-        "mae_min": mae_min,
-        "mae_max": mae_max,
-        "average_duration_candles": average_duration_candles,
-        "median_duration_candles": median_duration_candles,
-        "mfe_p25": mfe_p25,
-        "mfe_p50": mfe_p50,
-        "mfe_p75": mfe_p75,
-        "mae_p25": mae_p25,
-        "mae_p50": mae_p50,
-        "mae_p75": mae_p75,
-        "duration_p25": duration_p25,
-        "duration_p50": duration_p50,
-        "duration_p75": duration_p75,
+        **outcome_analytics,
+        "average_mfe_points": mfe_statistics["average"],
+        "average_mae_points": mae_statistics["average"],
+        "median_mfe_points": mfe_statistics["median"],
+        "median_mae_points": mae_statistics["median"],
+        "mfe_min": mfe_statistics["min"],
+        "mfe_max": mfe_statistics["max"],
+        "mae_min": mae_statistics["min"],
+        "mae_max": mae_statistics["max"],
+        "average_duration_candles": duration_statistics["average"],
+        "median_duration_candles": duration_statistics["median"],
+        "mfe_p25": mfe_statistics["p25"],
+        "mfe_p50": mfe_statistics["p50"],
+        "mfe_p75": mfe_statistics["p75"],
+        "mae_p25": mae_statistics["p25"],
+        "mae_p50": mae_statistics["p50"],
+        "mae_p75": mae_statistics["p75"],
+        "duration_p25": duration_statistics["p25"],
+        "duration_p50": duration_statistics["p50"],
+        "duration_p75": duration_statistics["p75"],
     }
 
 
