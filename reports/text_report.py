@@ -18,19 +18,45 @@ def _format_parameters(
     )
 
 
+def _format_number(
+    value: int | float,
+) -> str:
+    """
+    Formata valores numéricos com duas casas decimais.
+    """
+
+    return f"{value:.2f}"
+
+
 def _format_outcome_row(
     label: str,
     values: dict,
+    decimal: bool = True,
 ) -> str:
     """
     Formata uma linha da tabela por resultado.
     """
 
+    if decimal:
+        win = _format_number(
+            values.get("win", 0.0)
+        )
+        loss = _format_number(
+            values.get("loss", 0.0)
+        )
+        even = _format_number(
+            values.get("even", 0.0)
+        )
+    else:
+        win = str(values.get("win", 0))
+        loss = str(values.get("loss", 0))
+        even = str(values.get("even", 0))
+
     return (
         f"{label:<18}"
-        f"{values.get('win', 0):>10}"
-        f"{values.get('loss', 0):>10}"
-        f"{values.get('even', 0):>10}"
+        f"{win:>12}"
+        f"{loss:>12}"
+        f"{even:>12}"
     )
 
 
@@ -77,74 +103,79 @@ def create_text_report(
         "-----------------",
         (
             "MFE average: "
-            f"{summary.get('average_mfe_points', 0.0)} pts"
+            f"{_format_number(summary.get('average_mfe_points', 0.0))} "
+            "pts"
         ),
         (
             "MFE median: "
-            f"{summary.get('median_mfe_points', 0.0)} pts"
+            f"{_format_number(summary.get('median_mfe_points', 0.0))} "
+            "pts"
         ),
         (
             "MFE P25/P50/P75: "
-            f"{summary.get('mfe_p25', 0.0)} / "
-            f"{summary.get('mfe_p50', 0.0)} / "
-            f"{summary.get('mfe_p75', 0.0)} pts"
+            f"{_format_number(summary.get('mfe_p25', 0.0))} / "
+            f"{_format_number(summary.get('mfe_p50', 0.0))} / "
+            f"{_format_number(summary.get('mfe_p75', 0.0))} pts"
         ),
         (
             "MFE min/max: "
-            f"{summary.get('mfe_min', 0.0)} / "
-            f"{summary.get('mfe_max', 0.0)} pts"
+            f"{_format_number(summary.get('mfe_min', 0.0))} / "
+            f"{_format_number(summary.get('mfe_max', 0.0))} pts"
         ),
         "",
         (
             "MAE average: "
-            f"{summary.get('average_mae_points', 0.0)} pts"
+            f"{_format_number(summary.get('average_mae_points', 0.0))} "
+            "pts"
         ),
         (
             "MAE median: "
-            f"{summary.get('median_mae_points', 0.0)} pts"
+            f"{_format_number(summary.get('median_mae_points', 0.0))} "
+            "pts"
         ),
         (
             "MAE P25/P50/P75: "
-            f"{summary.get('mae_p25', 0.0)} / "
-            f"{summary.get('mae_p50', 0.0)} / "
-            f"{summary.get('mae_p75', 0.0)} pts"
+            f"{_format_number(summary.get('mae_p25', 0.0))} / "
+            f"{_format_number(summary.get('mae_p50', 0.0))} / "
+            f"{_format_number(summary.get('mae_p75', 0.0))} pts"
         ),
         (
             "MAE min/max: "
-            f"{summary.get('mae_min', 0.0)} / "
-            f"{summary.get('mae_max', 0.0)} pts"
+            f"{_format_number(summary.get('mae_min', 0.0))} / "
+            f"{_format_number(summary.get('mae_max', 0.0))} pts"
         ),
         "",
         "Duration",
         "--------",
         (
             "Average: "
-            f"{summary.get('average_duration_candles', 0.0)} "
+            f"{_format_number(summary.get('average_duration_candles', 0.0))} "
             "candles"
         ),
         (
             "Median: "
-            f"{summary.get('median_duration_candles', 0.0)} "
+            f"{_format_number(summary.get('median_duration_candles', 0.0))} "
             "candles"
         ),
         (
             "P25/P50/P75: "
-            f"{summary.get('duration_p25', 0.0)} / "
-            f"{summary.get('duration_p50', 0.0)} / "
-            f"{summary.get('duration_p75', 0.0)} candles"
+            f"{_format_number(summary.get('duration_p25', 0.0))} / "
+            f"{_format_number(summary.get('duration_p50', 0.0))} / "
+            f"{_format_number(summary.get('duration_p75', 0.0))} candles"
         ),
         "",
         "By outcome",
         "----------",
         (
             f"{'':<18}"
-            f"{'WIN':>10}"
-            f"{'LOSS':>10}"
-            f"{'EVEN':>10}"
+            f"{'WIN':>12}"
+            f"{'LOSS':>12}"
+            f"{'EVEN':>12}"
         ),
         _format_outcome_row(
             "Trades",
             summary.get("outcome_trades", {}),
+            decimal=False,
         ),
         _format_outcome_row(
             "MFE average",

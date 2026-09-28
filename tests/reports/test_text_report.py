@@ -81,14 +81,14 @@ def test_create_text_report_includes_mfe_statistics():
     )
 
     assert "General excursion" in report
-    assert "MFE average: 315.4 pts" in report
-    assert "MFE median: 260.0 pts" in report
+    assert "MFE average: 315.40 pts" in report
+    assert "MFE median: 260.00 pts" in report
     assert (
         "MFE P25/P50/P75: "
-        "150.0 / 260.0 / 420.0 pts"
+        "150.00 / 260.00 / 420.00 pts"
         in report
     )
-    assert "MFE min/max: 0.0 / 1350.0 pts" in report
+    assert "MFE min/max: 0.00 / 1350.00 pts" in report
 
 
 def test_create_text_report_includes_mae_statistics():
@@ -111,14 +111,14 @@ def test_create_text_report_includes_mae_statistics():
     )
 
     assert "General excursion" in report
-    assert "MAE average: -185.7 pts" in report
-    assert "MAE median: -140.0 pts" in report
+    assert "MAE average: -185.70 pts" in report
+    assert "MAE median: -140.00 pts" in report
     assert (
         "MAE P25/P50/P75: "
-        "-260.0 / -140.0 / -70.0 pts"
+        "-260.00 / -140.00 / -70.00 pts"
         in report
     )
-    assert "MAE min/max: -1100.0 / 0.0 pts" in report
+    assert "MAE min/max: -1100.00 / 0.00 pts" in report
 
 
 def test_create_text_report_includes_duration_statistics():
@@ -139,11 +139,11 @@ def test_create_text_report_includes_duration_statistics():
     )
 
     assert "Duration" in report
-    assert "Average: 18.4 candles" in report
-    assert "Median: 14.0 candles" in report
+    assert "Average: 18.40 candles" in report
+    assert "Median: 14.00 candles" in report
     assert (
         "P25/P50/P75: "
-        "7.0 / 14.0 / 25.0 candles"
+        "7.00 / 14.00 / 25.00 candles"
         in report
     )
 
@@ -192,16 +192,41 @@ def test_create_text_report_includes_outcome_statistics():
     assert "20" in report
 
     assert "MFE average" in report
-    assert "420.5" in report
-    assert "160.8" in report
-    assert "225.0" in report
+    assert "420.50" in report
+    assert "160.80" in report
+    assert "225.00" in report
 
     assert "MAE average" in report
-    assert "-95.2" in report
-    assert "-285.7" in report
-    assert "-140.0" in report
+    assert "-95.20" in report
+    assert "-285.70" in report
+    assert "-140.00" in report
 
     assert "Duration average" in report
-    assert "16.3" in report
-    assert "21.8" in report
-    assert "12.5" in report
+    assert "16.30" in report
+    assert "21.80" in report
+    assert "12.50" in report
+
+
+def test_create_text_report_formats_decimal_values():
+    summary = {
+        "average_mfe_points": 640.1581546391752,
+        "outcome_average_mfe": {
+            "win": 1049.3084862385338,
+            "loss": 302.40554079696375,
+            "even": 583.8842857142778,
+        },
+    }
+
+    report = create_text_report(
+        summary,
+        strategy_name="Breakout",
+        strategy_parameters={
+            "lookback": 20,
+        },
+    )
+
+    assert "MFE average: 640.16 pts" in report
+
+    assert "1049.31" in report
+    assert "302.41" in report
+    assert "583.88" in report
