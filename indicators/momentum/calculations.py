@@ -47,13 +47,9 @@ def separate_gains_and_losses(
         lower=0,
     )
 
-    losses = (
-        changes
-        .clip(
-            upper=0,
-        )
-        .abs()
-    )
+    losses = changes.clip(
+        upper=0,
+    ).abs()
 
     return gains, losses
 

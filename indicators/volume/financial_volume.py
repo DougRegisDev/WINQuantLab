@@ -33,14 +33,10 @@ def financial_volume(df: pd.DataFrame) -> pd.DataFrame:
     missing_columns = required_columns - set(df.columns)
 
     if missing_columns:
-        raise ValueError(
-            f"Missing required columns: {sorted(missing_columns)}"
-        )
+        raise ValueError(f"Missing required columns: {sorted(missing_columns)}")
 
     result = df.copy()
 
-    result["financial_volume"] = (
-        result["close"] * result["volume"]
-    )
+    result["financial_volume"] = result["close"] * result["volume"]
 
     return result

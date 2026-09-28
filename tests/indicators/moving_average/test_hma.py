@@ -45,10 +45,7 @@ def test_hma_values(
         period,
     )
 
-    intermediate_series = (
-        2 * wma_half
-        - wma_full
-    )
+    intermediate_series = 2 * wma_half - wma_full
 
     expected = calculate_wma(
         intermediate_series,

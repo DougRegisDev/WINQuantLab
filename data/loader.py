@@ -14,9 +14,7 @@ def validate_file_exists(file_path: Path) -> None:
     """
 
     if not file_path.exists():
-        raise FileNotFoundError(
-            f"Arquivo não encontrado: {file_path}"
-        )
+        raise FileNotFoundError(f"Arquivo não encontrado: {file_path}")
 
 
 def read_csv(

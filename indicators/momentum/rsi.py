@@ -70,9 +70,7 @@ def rsi(
 
     relative_strength = average_gain / average_loss
 
-    rsi_values = 100 - (
-        100 / (1 + relative_strength)
-    )
+    rsi_values = 100 - (100 / (1 + relative_strength))
 
     rsi_values = rsi_values.mask(
         (average_loss == 0) & (average_gain > 0),

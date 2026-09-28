@@ -53,12 +53,6 @@ def roc(
         period,
     )
 
-    result[f"roc_{period}"] = (
-        (
-            result["close"]
-            / previous
-        )
-        - 1
-    ) * 100
+    result[f"roc_{period}"] = ((result["close"] / previous) - 1) * 100
 
     return result

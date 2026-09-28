@@ -169,24 +169,13 @@ def test_stochastic_values(
     )
 
     expected_k = (
-        (
-            market_data["close"]
-            - lowest_low
-        )
-        / (
-            highest_high
-            - lowest_low
-        )
+        (market_data["close"] - lowest_low) / (highest_high - lowest_low)
     ) * 100
 
-    expected_d = (
-        expected_k
-        .rolling(
-            window=d_period,
-            min_periods=d_period,
-        )
-        .mean()
-    )
+    expected_d = expected_k.rolling(
+        window=d_period,
+        min_periods=d_period,
+    ).mean()
 
     pd.testing.assert_series_equal(
         result["stochastic_k_14"],

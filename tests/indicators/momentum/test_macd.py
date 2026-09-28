@@ -148,20 +148,13 @@ def test_macd_values(
 
     expected_macd = ema_fast - ema_slow
 
-    expected_signal = (
-        expected_macd
-        .ewm(
-            span=signal_period,
-            adjust=False,
-            min_periods=signal_period,
-        )
-        .mean()
-    )
+    expected_signal = expected_macd.ewm(
+        span=signal_period,
+        adjust=False,
+        min_periods=signal_period,
+    ).mean()
 
-    expected_histogram = (
-        expected_macd
-        - expected_signal
-    )
+    expected_histogram = expected_macd - expected_signal
 
     pd.testing.assert_series_equal(
         result["macd"],

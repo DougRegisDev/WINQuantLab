@@ -131,60 +131,37 @@ def test_adx_values() -> None:
         axis=1,
     ).max(axis=1)
 
-    smoothed_positive_dm = (
-        positive_dm
-        .ewm(
-            alpha=1 / period,
-            adjust=False,
-            min_periods=period,
-        )
-        .mean()
-    )
+    smoothed_positive_dm = positive_dm.ewm(
+        alpha=1 / period,
+        adjust=False,
+        min_periods=period,
+    ).mean()
 
-    smoothed_negative_dm = (
-        negative_dm
-        .ewm(
-            alpha=1 / period,
-            adjust=False,
-            min_periods=period,
-        )
-        .mean()
-    )
+    smoothed_negative_dm = negative_dm.ewm(
+        alpha=1 / period,
+        adjust=False,
+        min_periods=period,
+    ).mean()
 
-    average_true_range = (
-        true_range
-        .ewm(
-            alpha=1 / period,
-            adjust=False,
-            min_periods=period,
-        )
-        .mean()
-    )
+    average_true_range = true_range.ewm(
+        alpha=1 / period,
+        adjust=False,
+        min_periods=period,
+    ).mean()
 
-    positive_di = (
-        smoothed_positive_dm
-        / average_true_range
-    ) * 100
+    positive_di = (smoothed_positive_dm / average_true_range) * 100
 
-    negative_di = (
-        smoothed_negative_dm
-        / average_true_range
-    ) * 100
+    negative_di = (smoothed_negative_dm / average_true_range) * 100
 
     directional_index = (
-        (positive_di - negative_di).abs()
-        / (positive_di + negative_di)
+        (positive_di - negative_di).abs() / (positive_di + negative_di)
     ) * 100
 
-    expected = (
-        directional_index
-        .ewm(
-            alpha=1 / period,
-            adjust=False,
-            min_periods=period,
-        )
-        .mean()
-    )
+    expected = directional_index.ewm(
+        alpha=1 / period,
+        adjust=False,
+        min_periods=period,
+    ).mean()
 
     pd.testing.assert_series_equal(
         result["adx_3"],

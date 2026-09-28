@@ -29,15 +29,11 @@ def test_calculate_ema() -> None:
         period,
     )
 
-    expected = (
-        series
-        .ewm(
-            span=period,
-            adjust=False,
-            min_periods=period,
-        )
-        .mean()
-    )
+    expected = series.ewm(
+        span=period,
+        adjust=False,
+        min_periods=period,
+    ).mean()
 
     pd.testing.assert_series_equal(
         result,
@@ -129,15 +125,11 @@ def test_calculate_wilder_average() -> None:
         period,
     )
 
-    expected = (
-        series
-        .ewm(
-            alpha=1 / period,
-            adjust=False,
-            min_periods=period,
-        )
-        .mean()
-    )
+    expected = series.ewm(
+        alpha=1 / period,
+        adjust=False,
+        min_periods=period,
+    ).mean()
 
     pd.testing.assert_series_equal(
         result,

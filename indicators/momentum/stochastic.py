@@ -57,9 +57,7 @@ def stochastic(
 
     for column in required_columns:
         if column not in dataframe.columns:
-            raise ValueError(
-                f"DataFrame deve conter a coluna '{column}'."
-            )
+            raise ValueError(f"DataFrame deve conter a coluna '{column}'.")
 
     result = dataframe.copy()
 
@@ -75,27 +73,15 @@ def stochastic(
 
     denominator = highest_high - lowest_low
 
-    k_line = (
-        (
-            result["close"]
-            - lowest_low
-        )
-        / denominator
-    ) * 100
+    k_line = ((result["close"] - lowest_low) / denominator) * 100
 
-    d_line = (
-        k_line
-        .rolling(
-            window=d_period,
-            min_periods=d_period,
-        )
-        .mean()
-    )
+    d_line = k_line.rolling(
+        window=d_period,
+        min_periods=d_period,
+    ).mean()
 
     result[f"stochastic_k_{k_period}"] = k_line
 
-    result[
-        f"stochastic_d_{k_period}_{d_period}"
-    ] = d_line
+    result[f"stochastic_d_{k_period}_{d_period}"] = d_line
 
     return result

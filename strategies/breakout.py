@@ -33,9 +33,7 @@ def breakout(
         If a required market data column is missing.
     """
     if lookback <= 0:
-        raise ValueError(
-            "lookback must be greater than zero"
-        )
+        raise ValueError("lookback must be greater than zero")
 
     required_columns = (
         "high",
@@ -45,37 +43,19 @@ def breakout(
 
     for column in required_columns:
         if column not in df.columns:
-            raise ValueError(
-                f"The column '{column}' was not found"
-            )
+            raise ValueError(f"The column '{column}' was not found")
 
     result = df.copy()
 
-    result["breakout_high"] = (
-        result["high"]
-        .rolling(window=lookback)
-        .max()
-        .shift(1)
-    )
+    result["breakout_high"] = result["high"].rolling(window=lookback).max().shift(1)
 
-    result["breakout_low"] = (
-        result["low"]
-        .rolling(window=lookback)
-        .min()
-        .shift(1)
-    )
+    result["breakout_low"] = result["low"].rolling(window=lookback).min().shift(1)
 
     result["signal"] = 0
 
-    buy_signal = (
-        result["close"]
-        > result["breakout_high"]
-    )
+    buy_signal = result["close"] > result["breakout_high"]
 
-    sell_signal = (
-        result["close"]
-        < result["breakout_low"]
-    )
+    sell_signal = result["close"] < result["breakout_low"]
 
     result.loc[buy_signal, "signal"] = 1
     result.loc[sell_signal, "signal"] = -1

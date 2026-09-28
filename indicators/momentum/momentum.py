@@ -41,9 +41,6 @@ def momentum(
         period,
     )
 
-    result[f"momentum_{period}"] = (
-        result["close"]
-        - previous
-    )
+    result[f"momentum_{period}"] = result["close"] - previous
 
     return result

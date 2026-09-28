@@ -25,15 +25,11 @@ def calculate_ema(
     pd.Series
         Série contendo os valores da EMA.
     """
-    return (
-        series
-        .ewm(
-            span=period,
-            adjust=False,
-            min_periods=period,
-        )
-        .mean()
-    )
+    return series.ewm(
+        span=period,
+        adjust=False,
+        min_periods=period,
+    ).mean()
 
 
 def calculate_rolling_max(
@@ -56,14 +52,10 @@ def calculate_rolling_max(
     pd.Series
         Série contendo os maiores valores de cada janela.
     """
-    return (
-        series
-        .rolling(
-            window=period,
-            min_periods=period,
-        )
-        .max()
-    )
+    return series.rolling(
+        window=period,
+        min_periods=period,
+    ).max()
 
 
 def calculate_rolling_min(
@@ -86,14 +78,10 @@ def calculate_rolling_min(
     pd.Series
         Série contendo os menores valores de cada janela.
     """
-    return (
-        series
-        .rolling(
-            window=period,
-            min_periods=period,
-        )
-        .min()
-    )
+    return series.rolling(
+        window=period,
+        min_periods=period,
+    ).min()
 
 
 def calculate_true_range(
@@ -154,15 +142,11 @@ def calculate_wilder_average(
     pd.Series
         Série suavizada segundo o método de Wilder.
     """
-    return (
-        series
-        .ewm(
-            alpha=1 / period,
-            adjust=False,
-            min_periods=period,
-        )
-        .mean()
-    )
+    return series.ewm(
+        alpha=1 / period,
+        adjust=False,
+        min_periods=period,
+    ).mean()
 
 
 def calculate_average_true_range(
@@ -249,11 +233,6 @@ def calculate_directional_index(
     """
     denominator = positive_di + negative_di
 
-    directional_difference = (
-        positive_di - negative_di
-    ).abs()
+    directional_difference = (positive_di - negative_di).abs()
 
-    return (
-        directional_difference
-        / denominator
-    ) * 100
+    return (directional_difference / denominator) * 100

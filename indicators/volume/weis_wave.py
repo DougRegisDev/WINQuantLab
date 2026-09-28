@@ -32,9 +32,7 @@ def weis_wave(df: pd.DataFrame) -> pd.DataFrame:
     missing_columns = required_columns - set(df.columns)
 
     if missing_columns:
-        raise ValueError(
-            f"Missing required columns: {sorted(missing_columns)}"
-        )
+        raise ValueError(f"Missing required columns: {sorted(missing_columns)}")
 
     result = df.copy()
 
@@ -63,24 +61,18 @@ def weis_wave(df: pd.DataFrame) -> pd.DataFrame:
         if current_direction == 0:
             directions.append(wave_direction)
 
-            current_wave_volume = (
-                wave_volumes[-1] + current_volume
-            )
+            current_wave_volume = wave_volumes[-1] + current_volume
 
         elif wave_direction == 0:
             wave_direction = current_direction
             directions.append(wave_direction)
 
-            current_wave_volume = (
-                wave_volumes[-1] + current_volume
-            )
+            current_wave_volume = wave_volumes[-1] + current_volume
 
         elif current_direction == wave_direction:
             directions.append(wave_direction)
 
-            current_wave_volume = (
-                wave_volumes[-1] + current_volume
-            )
+            current_wave_volume = wave_volumes[-1] + current_volume
 
         else:
             wave_direction = current_direction

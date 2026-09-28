@@ -35,26 +35,17 @@ def vwap(df: pd.DataFrame) -> pd.DataFrame:
     missing_columns = required_columns - set(df.columns)
 
     if missing_columns:
-        raise ValueError(
-            f"Missing required columns: {sorted(missing_columns)}"
-        )
+        raise ValueError(f"Missing required columns: {sorted(missing_columns)}")
 
     result = df.copy()
 
-    typical_price = (
-        result["high"]
-        + result["low"]
-        + result["close"]
-    ) / 3
+    typical_price = (result["high"] + result["low"] + result["close"]) / 3
 
     price_volume = typical_price * result["volume"]
 
     cumulative_price_volume = price_volume.cumsum()
     cumulative_volume = result["volume"].cumsum()
 
-    result["vwap"] = (
-        cumulative_price_volume
-        / cumulative_volume
-    )
+    result["vwap"] = cumulative_price_volume / cumulative_volume
 
     return result

@@ -32,14 +32,10 @@ def calculate_wma(
         dtype=float,
     )
 
-    return (
-        series
-        .rolling(
-            window=period,
-            min_periods=period,
-        )
-        .apply(
-            lambda values: np.dot(values, weights) / weights.sum(),
-            raw=True,
-        )
+    return series.rolling(
+        window=period,
+        min_periods=period,
+    ).apply(
+        lambda values: np.dot(values, weights) / weights.sum(),
+        raw=True,
     )

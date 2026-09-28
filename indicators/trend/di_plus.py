@@ -55,9 +55,7 @@ def di_plus(
 
     for column in required_columns:
         if column not in dataframe.columns:
-            raise ValueError(
-                f"DataFrame deve conter a coluna '{column}'."
-            )
+            raise ValueError(f"DataFrame deve conter a coluna '{column}'.")
 
     result = dataframe.copy()
 
@@ -82,9 +80,6 @@ def di_plus(
         period,
     )
 
-    result[f"di_plus_{period}"] = (
-        smoothed_positive_dm
-        / average_true_range
-    ) * 100
+    result[f"di_plus_{period}"] = (smoothed_positive_dm / average_true_range) * 100
 
     return result

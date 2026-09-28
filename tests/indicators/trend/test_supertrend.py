@@ -151,9 +151,7 @@ def test_supertrend_direction_values() -> None:
         multiplier=2.0,
     )
 
-    direction = result[
-        "supertrend_direction_3_2"
-    ].dropna()
+    direction = result["supertrend_direction_3_2"].dropna()
 
     assert direction.isin(
         [-1, 1],

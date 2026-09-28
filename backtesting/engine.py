@@ -26,17 +26,13 @@ def _calculate_long_mfe(
     entry_index = position["entry_index"]
     entry_price = position["entry_price"]
 
-    active_highs = df["high"].iloc[
-        entry_index: last_active_index + 1
-    ]
+    active_highs = df["high"].iloc[entry_index : last_active_index + 1]
 
     highest_high = active_highs.max()
     highest_high_position = active_highs.to_numpy().argmax()
 
     position["favorable_price"] = highest_high
-    position["mfe_index"] = (
-        entry_index + highest_high_position
-    )
+    position["mfe_index"] = entry_index + highest_high_position
 
     return max(
         0,
@@ -53,17 +49,13 @@ def _calculate_long_mae(
     entry_index = position["entry_index"]
     entry_price = position["entry_price"]
 
-    active_lows = df["low"].iloc[
-        entry_index: last_active_index + 1
-    ]
+    active_lows = df["low"].iloc[entry_index : last_active_index + 1]
 
     lowest_low = active_lows.min()
     lowest_low_position = active_lows.to_numpy().argmin()
 
     position["adverse_price"] = lowest_low
-    position["mae_index"] = (
-        entry_index + lowest_low_position
-    )
+    position["mae_index"] = entry_index + lowest_low_position
 
     return min(
         0,
@@ -80,17 +72,13 @@ def _calculate_short_mfe(
     entry_index = position["entry_index"]
     entry_price = position["entry_price"]
 
-    active_lows = df["low"].iloc[
-        entry_index: last_active_index + 1
-    ]
+    active_lows = df["low"].iloc[entry_index : last_active_index + 1]
 
     lowest_low = active_lows.min()
     lowest_low_position = active_lows.to_numpy().argmin()
 
     position["favorable_price"] = lowest_low
-    position["mfe_index"] = (
-        entry_index + lowest_low_position
-    )
+    position["mfe_index"] = entry_index + lowest_low_position
 
     return max(
         0,
@@ -107,17 +95,13 @@ def _calculate_short_mae(
     entry_index = position["entry_index"]
     entry_price = position["entry_price"]
 
-    active_highs = df["high"].iloc[
-        entry_index: last_active_index + 1
-    ]
+    active_highs = df["high"].iloc[entry_index : last_active_index + 1]
 
     highest_high = active_highs.max()
     highest_high_position = active_highs.to_numpy().argmax()
 
     position["adverse_price"] = highest_high
-    position["mae_index"] = (
-        entry_index + highest_high_position
-    )
+    position["mae_index"] = entry_index + highest_high_position
 
     return min(
         0,
@@ -152,9 +136,7 @@ def _close_position(
     else:
         position["outcome"] = "even"
 
-    position["duration_candles"] = (
-        last_active_index - position["entry_index"] + 1
-    )
+    position["duration_candles"] = last_active_index - position["entry_index"] + 1
 
     if position["direction"] == "long":
         position["mfe_points"] = _calculate_long_mfe(
@@ -215,16 +197,12 @@ def backtest(df: pd.DataFrame) -> list:
 
     for column in required_columns:
         if column not in df.columns:
-            raise ValueError(
-                f"The column '{column}' was not found"
-            )
+            raise ValueError(f"The column '{column}' was not found")
 
     valid_signals = {-1, 0, 1}
 
     if not df["signal"].isin(valid_signals).all():
-        raise ValueError(
-            "signal must contain only -1, 0, or 1"
-        )
+        raise ValueError("signal must contain only -1, 0, or 1")
 
     trades = []
     position = None
@@ -255,11 +233,7 @@ def backtest(df: pd.DataFrame) -> list:
             if isinstance(df.index, pd.DatetimeIndex):
                 position["entry_time"] = df.index[next_index]
 
-        elif (
-            position is not None
-            and position["direction"] == "long"
-            and signal == -1
-        ):
+        elif position is not None and position["direction"] == "long" and signal == -1:
             trade = _close_position(
                 position=position,
                 exit_index=next_index,
@@ -271,11 +245,7 @@ def backtest(df: pd.DataFrame) -> list:
             trades.append(trade)
             position = None
 
-        elif (
-            position is not None
-            and position["direction"] == "short"
-            and signal == 1
-        ):
+        elif position is not None and position["direction"] == "short" and signal == 1:
             trade = _close_position(
                 position=position,
                 exit_index=next_index,

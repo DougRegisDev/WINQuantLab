@@ -30,9 +30,7 @@ STRATEGIES: dict[
 ] = {
     "breakout": {
         "function": breakout,
-        "parameters": (
-            "lookback",
-        ),
+        "parameters": ("lookback",),
     },
     "moving_average_crossover": {
         "function": moving_average_crossover,
@@ -52,9 +50,7 @@ def positive_integer(value: str) -> int:
     integer_value = int(value)
 
     if integer_value <= 0:
-        raise argparse.ArgumentTypeError(
-            "value must be greater than zero"
-        )
+        raise argparse.ArgumentTypeError("value must be greater than zero")
 
     return integer_value
 
@@ -66,13 +62,9 @@ def get_strategy_parameters(
     Retorna apenas os parâmetros da estratégia escolhida.
     """
 
-    strategy_config = STRATEGIES[
-        args.strategy
-    ]
+    strategy_config = STRATEGIES[args.strategy]
 
-    parameter_names = strategy_config[
-        "parameters"
-    ]
+    parameter_names = strategy_config["parameters"]
 
     return {
         parameter_name: getattr(
@@ -93,17 +85,11 @@ def run_strategy(
     """
 
     try:
-        strategy_config = STRATEGIES[
-            strategy_name
-        ]
+        strategy_config = STRATEGIES[strategy_name]
     except KeyError as error:
-        raise ValueError(
-            f"Strategy not supported: {strategy_name}"
-        ) from error
+        raise ValueError(f"Strategy not supported: {strategy_name}") from error
 
-    strategy = strategy_config[
-        "function"
-    ]
+    strategy = strategy_config["function"]
 
     return strategy(
         market_data,
@@ -128,9 +114,7 @@ def run_backtest_command(
         source="profit",
     )
 
-    strategy_parameters = (
-        get_strategy_parameters(args)
-    )
+    strategy_parameters = get_strategy_parameters(args)
 
     def strategy(
         session_data: pd.DataFrame,
@@ -146,16 +130,12 @@ def run_backtest_command(
         strategy,
     )
 
-    summary = create_period_summary(
-        session_results
-    )
+    summary = create_period_summary(session_results)
 
     return create_text_report(
         summary,
         strategy_name=args.strategy,
-        strategy_parameters=(
-            strategy_parameters
-        ),
+        strategy_parameters=(strategy_parameters),
     )
 
 
@@ -217,14 +197,10 @@ def main(
 
     parser = create_parser()
 
-    args = parser.parse_args(
-        argv
-    )
+    args = parser.parse_args(argv)
 
     if args.command == "backtest":
-        report = run_backtest_command(
-            args
-        )
+        report = run_backtest_command(args)
 
         print(report)
 

@@ -22,9 +22,7 @@ def _validate_datetime_column(
     """
 
     if "datetime" not in market_data.columns:
-        raise ValueError(
-            "The column 'datetime' was not found"
-        )
+        raise ValueError("The column 'datetime' was not found")
 
 
 def split_sessions(
@@ -42,9 +40,7 @@ def split_sessions(
         market_data["datetime"].dt.date,
         sort=True,
     ):
-        session_data = session_data.sort_values(
-            by="datetime"
-        ).reset_index(drop=True)
+        session_data = session_data.sort_values(by="datetime").reset_index(drop=True)
 
         sessions.append(
             {
@@ -65,53 +61,25 @@ def _create_session_summary(
     Cria o resumo de uma sessão.
     """
 
-    longs = sum(
-        trade["direction"] == "long"
-        for trade in trades
-    )
+    longs = sum(trade["direction"] == "long" for trade in trades)
 
-    shorts = sum(
-        trade["direction"] == "short"
-        for trade in trades
-    )
+    shorts = sum(trade["direction"] == "short" for trade in trades)
 
-    wins = sum(
-        trade["outcome"] == "win"
-        for trade in trades
-    )
+    wins = sum(trade["outcome"] == "win" for trade in trades)
 
-    losses = sum(
-        trade["outcome"] == "loss"
-        for trade in trades
-    )
+    losses = sum(trade["outcome"] == "loss" for trade in trades)
 
-    evens = sum(
-        trade["outcome"] == "even"
-        for trade in trades
-    )
+    evens = sum(trade["outcome"] == "even" for trade in trades)
 
-    pnl_points = sum(
-        trade["pnl_points"]
-        for trade in trades
-    )
+    pnl_points = sum(trade["pnl_points"] for trade in trades)
 
-    mfe_points = sum(
-        trade["mfe_points"]
-        for trade in trades
-    )
+    mfe_points = sum(trade["mfe_points"] for trade in trades)
 
-    mae_points = sum(
-        trade["mae_points"]
-        for trade in trades
-    )
+    mae_points = sum(trade["mae_points"] for trade in trades)
 
     if trades:
-        average_mfe_points = (
-            mfe_points / len(trades)
-        )
-        average_mae_points = (
-            mae_points / len(trades)
-        )
+        average_mfe_points = mfe_points / len(trades)
+        average_mae_points = mae_points / len(trades)
     else:
         average_mfe_points = 0.0
         average_mae_points = 0.0
@@ -140,11 +108,7 @@ def _collect_period_trades(
     Consolida os trades de todas as sessões.
     """
 
-    return [
-        trade
-        for result in session_results
-        for trade in result.get("trades", [])
-    ]
+    return [trade for result in session_results for trade in result.get("trades", [])]
 
 
 def _calculate_distribution(
@@ -193,10 +157,7 @@ def _calculate_outcome_average(
     values = [
         trade[field]
         for trade in period_trades
-        if (
-            trade.get("outcome") == outcome
-            and field in trade
-        )
+        if (trade.get("outcome") == outcome and field in trade)
     ]
 
     if not values:
@@ -213,10 +174,7 @@ def _calculate_outcome_analytics(
     """
 
     outcome_trades = {
-        outcome: sum(
-            trade.get("outcome") == outcome
-            for trade in period_trades
-        )
+        outcome: sum(trade.get("outcome") == outcome for trade in period_trades)
         for outcome in OUTCOMES
     }
 
@@ -265,67 +223,34 @@ def create_period_summary(
     sessions = len(session_results)
 
     sessions_with_trades = sum(
-        result["summary"]["trades"] > 0
-        for result in session_results
+        result["summary"]["trades"] > 0 for result in session_results
     )
 
-    sessions_without_trades = (
-        sessions - sessions_with_trades
-    )
+    sessions_without_trades = sessions - sessions_with_trades
 
-    candles = sum(
-        result["summary"]["candles"]
-        for result in session_results
-    )
+    candles = sum(result["summary"]["candles"] for result in session_results)
 
-    trades = sum(
-        result["summary"]["trades"]
-        for result in session_results
-    )
+    trades = sum(result["summary"]["trades"] for result in session_results)
 
-    longs = sum(
-        result["summary"].get("longs", 0)
-        for result in session_results
-    )
+    longs = sum(result["summary"].get("longs", 0) for result in session_results)
 
-    shorts = sum(
-        result["summary"].get("shorts", 0)
-        for result in session_results
-    )
+    shorts = sum(result["summary"].get("shorts", 0) for result in session_results)
 
-    wins = sum(
-        result["summary"].get("wins", 0)
-        for result in session_results
-    )
+    wins = sum(result["summary"].get("wins", 0) for result in session_results)
 
-    losses = sum(
-        result["summary"].get("losses", 0)
-        for result in session_results
-    )
+    losses = sum(result["summary"].get("losses", 0) for result in session_results)
 
-    evens = sum(
-        result["summary"].get("evens", 0)
-        for result in session_results
-    )
+    evens = sum(result["summary"].get("evens", 0) for result in session_results)
 
     pnl_points = sum(
-        result["summary"].get("pnl_points", 0.0)
-        for result in session_results
+        result["summary"].get("pnl_points", 0.0) for result in session_results
     )
 
-    period_trades = _collect_period_trades(
-        session_results
-    )
+    period_trades = _collect_period_trades(session_results)
 
-    mfe_values = [
-        trade["mfe_points"]
-        for trade in period_trades
-    ]
+    mfe_values = [trade["mfe_points"] for trade in period_trades]
 
-    mae_values = [
-        trade["mae_points"]
-        for trade in period_trades
-    ]
+    mae_values = [trade["mae_points"] for trade in period_trades]
 
     duration_values = [
         trade["duration_candles"]
@@ -333,21 +258,13 @@ def create_period_summary(
         if "duration_candles" in trade
     ]
 
-    mfe_statistics = _calculate_distribution(
-        mfe_values
-    )
+    mfe_statistics = _calculate_distribution(mfe_values)
 
-    mae_statistics = _calculate_distribution(
-        mae_values
-    )
+    mae_statistics = _calculate_distribution(mae_values)
 
-    duration_statistics = _calculate_distribution(
-        duration_values
-    )
+    duration_statistics = _calculate_distribution(duration_values)
 
-    outcome_analytics = _calculate_outcome_analytics(
-        period_trades
-    )
+    outcome_analytics = _calculate_outcome_analytics(period_trades)
 
     return {
         "sessions": sessions,
@@ -397,13 +314,9 @@ def run_sessions(
     results = []
 
     for session in sessions:
-        strategy_data = strategy(
-            session["data"]
-        )
+        strategy_data = strategy(session["data"])
 
-        trades = backtest(
-            strategy_data
-        )
+        trades = backtest(strategy_data)
 
         for trade in trades:
             trade["session"] = session["session"]

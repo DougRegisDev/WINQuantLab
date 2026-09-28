@@ -87,13 +87,7 @@ def test_roc_values(
 
     previous = market_data["close"].shift(period)
 
-    expected = (
-        (
-            market_data["close"]
-            / previous
-        )
-        - 1
-    ) * 100
+    expected = ((market_data["close"] / previous) - 1) * 100
 
     pd.testing.assert_series_equal(
         result["roc_14"],

@@ -119,37 +119,23 @@ def test_rsi_values(
 
     gains = changes.clip(lower=0)
 
-    losses = (
-        changes
-        .clip(upper=0)
-        .abs()
-    )
+    losses = changes.clip(upper=0).abs()
 
-    average_gain = (
-        gains
-        .ewm(
-            alpha=1 / period,
-            adjust=False,
-            min_periods=period,
-        )
-        .mean()
-    )
+    average_gain = gains.ewm(
+        alpha=1 / period,
+        adjust=False,
+        min_periods=period,
+    ).mean()
 
-    average_loss = (
-        losses
-        .ewm(
-            alpha=1 / period,
-            adjust=False,
-            min_periods=period,
-        )
-        .mean()
-    )
+    average_loss = losses.ewm(
+        alpha=1 / period,
+        adjust=False,
+        min_periods=period,
+    ).mean()
 
     relative_strength = average_gain / average_loss
 
-    expected = 100 - (
-        100 / (1 + relative_strength)
-    )
+    expected = 100 - (100 / (1 + relative_strength))
 
     expected = expected.mask(
         (average_loss == 0) & (average_gain > 0),

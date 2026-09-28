@@ -203,8 +203,7 @@ Foi considerada a criação de uma classe abstrata para todos os indicadores.
 Exemplo:
 
 ```python
-class Indicator:
-    ...
+class Indicator: ...
 ```
 
 Essa abordagem foi descartada neste momento.

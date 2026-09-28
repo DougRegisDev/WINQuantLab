@@ -56,9 +56,7 @@ def adx(
 
     for column in required_columns:
         if column not in dataframe.columns:
-            raise ValueError(
-                f"DataFrame deve conter a coluna '{column}'."
-            )
+            raise ValueError(f"DataFrame deve conter a coluna '{column}'.")
 
     result = dataframe.copy()
 
@@ -88,15 +86,9 @@ def adx(
         period,
     )
 
-    positive_di = (
-        smoothed_positive_dm
-        / average_true_range
-    ) * 100
+    positive_di = (smoothed_positive_dm / average_true_range) * 100
 
-    negative_di = (
-        smoothed_negative_dm
-        / average_true_range
-    ) * 100
+    negative_di = (smoothed_negative_dm / average_true_range) * 100
 
     directional_index = calculate_directional_index(
         positive_di=positive_di,

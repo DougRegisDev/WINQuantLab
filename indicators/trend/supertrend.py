@@ -48,14 +48,10 @@ def supertrend(
 
     for column in required_columns:
         if column not in dataframe.columns:
-            raise ValueError(
-                f"DataFrame deve conter a coluna '{column}'."
-            )
+            raise ValueError(f"DataFrame deve conter a coluna '{column}'.")
 
     if multiplier <= 0:
-        raise ValueError(
-            "multiplier deve ser maior que zero."
-        )
+        raise ValueError("multiplier deve ser maior que zero.")
 
     result = dataframe.copy()
 
@@ -70,20 +66,11 @@ def supertrend(
         period=period,
     )
 
-    middle_price = (
-        result["high"]
-        + result["low"]
-    ) / 2
+    middle_price = (result["high"] + result["low"]) / 2
 
-    basic_upper_band = (
-        middle_price
-        + multiplier * average_true_range
-    )
+    basic_upper_band = middle_price + multiplier * average_true_range
 
-    basic_lower_band = (
-        middle_price
-        - multiplier * average_true_range
-    )
+    basic_lower_band = middle_price - multiplier * average_true_range
 
     final_upper_band = pd.Series(
         index=result.index,
@@ -130,18 +117,12 @@ def supertrend(
         previous_upper = final_upper_band.iloc[position - 1]
         previous_lower = final_lower_band.iloc[position - 1]
 
-        if (
-            current_upper < previous_upper
-            or previous_close > previous_upper
-        ):
+        if current_upper < previous_upper or previous_close > previous_upper:
             final_upper_band.iloc[position] = current_upper
         else:
             final_upper_band.iloc[position] = previous_upper
 
-        if (
-            current_lower > previous_lower
-            or previous_close < previous_lower
-        ):
+        if current_lower > previous_lower or previous_close < previous_lower:
             final_lower_band.iloc[position] = current_lower
         else:
             final_lower_band.iloc[position] = previous_lower
@@ -151,31 +132,23 @@ def supertrend(
 
         if previous_supertrend == previous_upper:
             if current_close <= final_upper_band.iloc[position]:
-                supertrend_line.iloc[position] = (
-                    final_upper_band.iloc[position]
-                )
+                supertrend_line.iloc[position] = final_upper_band.iloc[position]
 
                 direction.iloc[position] = -1
 
             else:
-                supertrend_line.iloc[position] = (
-                    final_lower_band.iloc[position]
-                )
+                supertrend_line.iloc[position] = final_lower_band.iloc[position]
 
                 direction.iloc[position] = 1
 
         elif previous_supertrend == previous_lower:
             if current_close >= final_lower_band.iloc[position]:
-                supertrend_line.iloc[position] = (
-                    final_lower_band.iloc[position]
-                )
+                supertrend_line.iloc[position] = final_lower_band.iloc[position]
 
                 direction.iloc[position] = 1
 
             else:
-                supertrend_line.iloc[position] = (
-                    final_upper_band.iloc[position]
-                )
+                supertrend_line.iloc[position] = final_upper_band.iloc[position]
 
                 direction.iloc[position] = -1
 
@@ -187,12 +160,8 @@ def supertrend(
     result["final_upper_band"] = final_upper_band
     result["final_lower_band"] = final_lower_band
 
-    result[
-        f"supertrend_{period}_{multiplier_label}"
-    ] = supertrend_line
+    result[f"supertrend_{period}_{multiplier_label}"] = supertrend_line
 
-    result[
-        f"supertrend_direction_{period}_{multiplier_label}"
-    ] = direction
+    result[f"supertrend_direction_{period}_{multiplier_label}"] = direction
 
     return result

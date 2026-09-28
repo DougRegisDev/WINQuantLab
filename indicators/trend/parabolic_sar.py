@@ -49,9 +49,7 @@ def parabolic_sar(
     missing_columns = required_columns - set(df.columns)
 
     if missing_columns:
-        raise ValueError(
-            f"Missing required columns: {sorted(missing_columns)}"
-        )
+        raise ValueError(f"Missing required columns: {sorted(missing_columns)}")
 
     result = df.copy()
 
@@ -88,10 +86,8 @@ def parabolic_sar(
     for position in range(1, len(result)):
         previous_sar = sar.iloc[position - 1]
 
-        current_sar = (
-            previous_sar
-            + acceleration_factor
-            * (extreme_point - previous_sar)
+        current_sar = previous_sar + acceleration_factor * (
+            extreme_point - previous_sar
         )
 
         if bullish:

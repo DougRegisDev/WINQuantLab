@@ -954,12 +954,8 @@ def test_backtest_preserves_entry_and_exit_time():
     assert result[0]["entry_index"] == 1
     assert result[0]["exit_index"] == 2
 
-    assert result[0]["entry_time"] == pd.Timestamp(
-        "2026-09-23 09:05:00"
-    )
-    assert result[0]["exit_time"] == pd.Timestamp(
-        "2026-09-23 09:10:00"
-    )
+    assert result[0]["entry_time"] == pd.Timestamp("2026-09-23 09:05:00")
+    assert result[0]["exit_time"] == pd.Timestamp("2026-09-23 09:10:00")
 
 
 def test_backtest_preserves_exit_time_on_opposite_signal():
@@ -1011,14 +1007,10 @@ def test_backtest_preserves_exit_time_on_opposite_signal():
     assert len(result) == 1
 
     assert result[0]["entry_index"] == 1
-    assert result[0]["entry_time"] == pd.Timestamp(
-        "2026-09-23 09:05:00"
-    )
+    assert result[0]["entry_time"] == pd.Timestamp("2026-09-23 09:05:00")
 
     assert result[0]["exit_index"] == 3
-    assert result[0]["exit_time"] == pd.Timestamp(
-        "2026-09-23 09:15:00"
-    )
+    assert result[0]["exit_time"] == pd.Timestamp("2026-09-23 09:15:00")
 
     assert result[0]["entry_price"] == 110.0
     assert result[0]["exit_price"] == 125.0

@@ -368,9 +368,7 @@ Sempre utilizar exceções específicas.
 Preferir:
 
 ```python
-raise ValueError(
-    "Period must be greater than zero."
-)
+raise ValueError("Period must be greater than zero.")
 ```
 
 Evitar mensagens genéricas.

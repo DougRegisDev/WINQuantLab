@@ -53,9 +53,7 @@ def atr(
 
     for column in required_columns:
         if column not in dataframe.columns:
-            raise ValueError(
-                f"DataFrame deve conter a coluna '{column}'."
-            )
+            raise ValueError(f"DataFrame deve conter a coluna '{column}'.")
 
     result = dataframe.copy()
 

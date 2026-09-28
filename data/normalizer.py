@@ -34,13 +34,9 @@ def _normalize_source(
         return market_data
 
     if source == "profit":
-        return market_data.rename(
-            columns=PROFIT_COLUMNS
-        )
+        return market_data.rename(columns=PROFIT_COLUMNS)
 
-    raise ValueError(
-        f"Fonte de dados não suportada: {source}"
-    )
+    raise ValueError(f"Fonte de dados não suportada: {source}")
 
 
 def _normalize_columns(
@@ -50,9 +46,7 @@ def _normalize_columns(
     Renomeia as colunas para o padrão oficial do projeto.
     """
 
-    dataframe = market_data.rename(
-        columns=COLUMN_MAPPING
-    )
+    dataframe = market_data.rename(columns=COLUMN_MAPPING)
 
     return dataframe
 
@@ -64,20 +58,13 @@ def _create_datetime(
     Cria a coluna datetime.
     """
 
-    if (
-        "date" in market_data.columns
-        and "time" in market_data.columns
-    ):
+    if "date" in market_data.columns and "time" in market_data.columns:
         market_data["datetime"] = pd.to_datetime(
-            market_data["date"].astype(str)
-            + " "
-            + market_data["time"].astype(str),
+            market_data["date"].astype(str) + " " + market_data["time"].astype(str),
             dayfirst=True,
         )
 
-        market_data = market_data.drop(
-            columns=["date", "time"]
-        )
+        market_data = market_data.drop(columns=["date", "time"])
 
     return market_data
 
@@ -115,9 +102,7 @@ def _sort_dataframe(
     """
 
     if "datetime" in market_data.columns:
-        market_data = market_data.sort_values(
-            by="datetime"
-        )
+        market_data = market_data.sort_values(by="datetime")
 
     return market_data
 
@@ -140,9 +125,7 @@ def _reorder_columns(
     """
 
     existing_columns = [
-        column
-        for column in OFFICIAL_COLUMNS
-        if column in market_data.columns
+        column for column in OFFICIAL_COLUMNS if column in market_data.columns
     ]
 
     return market_data[existing_columns]

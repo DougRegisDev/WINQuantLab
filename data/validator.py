@@ -10,9 +10,7 @@ def validate_dataframe(
     Valida se o Dataframe contem dados.
     """
     if market_data.empty:
-        raise ValueError(
-            "O Dataframe está vazio"
-        )
+        raise ValueError("O Dataframe está vazio")
 
 
 def validate_columns(
@@ -20,9 +18,5 @@ def validate_columns(
 ) -> None:
 
     for column in REQUIRED_COLUMNS:
-
         if column not in market_data.columns:
-
-            raise ValueError(
-                f"Coluna obrigatória ausente: {column}"
-            )
+            raise ValueError(f"Coluna obrigatória ausente: {column}")

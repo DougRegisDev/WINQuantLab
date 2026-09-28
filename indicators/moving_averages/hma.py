@@ -73,10 +73,7 @@ def hma(
         period,
     )
 
-    intermediate_series = (
-        2 * wma_half
-        - wma_full
-    )
+    intermediate_series = 2 * wma_half - wma_full
 
     result[f"hma_{period}"] = calculate_wma(
         intermediate_series,

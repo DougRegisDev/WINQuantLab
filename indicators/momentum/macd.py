@@ -56,9 +56,7 @@ def macd(
     )
 
     if fast_period >= slow_period:
-        raise ValueError(
-            "fast_period deve ser menor que slow_period."
-        )
+        raise ValueError("fast_period deve ser menor que slow_period.")
 
     result = dataframe.copy()
 

@@ -83,11 +83,7 @@ def test_create_text_report_includes_mfe_statistics():
     assert "General excursion" in report
     assert "MFE average: 315.40 pts" in report
     assert "MFE median: 260.00 pts" in report
-    assert (
-        "MFE P25/P50/P75: "
-        "150.00 / 260.00 / 420.00 pts"
-        in report
-    )
+    assert "MFE P25/P50/P75: 150.00 / 260.00 / 420.00 pts" in report
     assert "MFE min/max: 0.00 / 1350.00 pts" in report
 
 
@@ -113,11 +109,7 @@ def test_create_text_report_includes_mae_statistics():
     assert "General excursion" in report
     assert "MAE average: -185.70 pts" in report
     assert "MAE median: -140.00 pts" in report
-    assert (
-        "MAE P25/P50/P75: "
-        "-260.00 / -140.00 / -70.00 pts"
-        in report
-    )
+    assert "MAE P25/P50/P75: -260.00 / -140.00 / -70.00 pts" in report
     assert "MAE min/max: -1100.00 / 0.00 pts" in report
 
 
@@ -141,11 +133,7 @@ def test_create_text_report_includes_duration_statistics():
     assert "Duration" in report
     assert "Average: 18.40 candles" in report
     assert "Median: 14.00 candles" in report
-    assert (
-        "P25/P50/P75: "
-        "7.00 / 14.00 / 25.00 candles"
-        in report
-    )
+    assert "P25/P50/P75: 7.00 / 14.00 / 25.00 candles" in report
 
 
 def test_create_text_report_includes_outcome_statistics():

@@ -6,18 +6,14 @@ from data.loader import load_data
 from data.normalizer import normalize
 from data.schemas import OFFICIAL_COLUMNS
 
-dataframe = load_data(
-    Path("tests/fixtures/csv/exemplo.csv")
-)
+dataframe = load_data(Path("tests/fixtures/csv/exemplo.csv"))
 dataframe = normalize(dataframe)
 assert list(dataframe.columns) == OFFICIAL_COLUMNS
 
 
 def test_columns_are_normalized():
 
-    dataframe = load_data(
-        Path("tests/fixtures/csv/exemplo.csv")
-    )
+    dataframe = load_data(Path("tests/fixtures/csv/exemplo.csv"))
 
     dataframe = normalize(dataframe)
 
@@ -35,9 +31,7 @@ def test_columns_are_normalized():
 
 def test_datetime_exists():
 
-    dataframe = load_data(
-        Path("tests/fixtures/csv/exemplo.csv")
-    )
+    dataframe = load_data(Path("tests/fixtures/csv/exemplo.csv"))
 
     dataframe = normalize(dataframe)
 
@@ -46,9 +40,7 @@ def test_datetime_exists():
 
 def test_numeric_columns():
 
-    dataframe = load_data(
-        Path("tests/fixtures/csv/exemplo.csv")
-    )
+    dataframe = load_data(Path("tests/fixtures/csv/exemplo.csv"))
 
     dataframe = normalize(dataframe)
 

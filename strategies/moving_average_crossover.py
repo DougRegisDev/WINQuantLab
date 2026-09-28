@@ -36,9 +36,7 @@ def moving_average_crossover(
         If fast_period is greater than or equal to slow_period.
     """
     if fast_period >= slow_period:
-        raise ValueError(
-            "fast_period must be smaller than slow_period"
-        )
+        raise ValueError("fast_period must be smaller than slow_period")
 
     result = df.copy()
 
@@ -57,20 +55,12 @@ def moving_average_crossover(
 
     result["signal"] = 0
 
-    buy_signal = (
-        (result[fast_column] > result[slow_column])
-        & (
-            result[fast_column].shift(1)
-            <= result[slow_column].shift(1)
-        )
+    buy_signal = (result[fast_column] > result[slow_column]) & (
+        result[fast_column].shift(1) <= result[slow_column].shift(1)
     )
 
-    sell_signal = (
-        (result[fast_column] < result[slow_column])
-        & (
-            result[fast_column].shift(1)
-            >= result[slow_column].shift(1)
-        )
+    sell_signal = (result[fast_column] < result[slow_column]) & (
+        result[fast_column].shift(1) >= result[slow_column].shift(1)
     )
 
     result.loc[buy_signal, "signal"] = 1

@@ -32,9 +32,7 @@ def obv(df: pd.DataFrame) -> pd.DataFrame:
     missing_columns = required_columns - set(df.columns)
 
     if missing_columns:
-        raise ValueError(
-            f"Missing required columns: {sorted(missing_columns)}"
-        )
+        raise ValueError(f"Missing required columns: {sorted(missing_columns)}")
 
     result = df.copy()
 

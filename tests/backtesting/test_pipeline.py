@@ -1,4 +1,4 @@
-﻿import pandas as pd
+import pandas as pd
 
 from backtesting.pipeline import (
     create_period_summary,
@@ -174,9 +174,7 @@ def test_run_sessions_executes_strategy_for_each_session():
     received_sessions = []
 
     def strategy(session_data):
-        received_sessions.append(
-            session_data.copy()
-        )
+        received_sessions.append(session_data.copy())
 
         result = session_data.copy()
         result["signal"] = 0
@@ -784,9 +782,7 @@ def test_create_period_summary_counts_sessions_and_trades():
         },
     ]
 
-    summary = create_period_summary(
-        session_results
-    )
+    summary = create_period_summary(session_results)
 
     assert summary["sessions"] == 3
     assert summary["sessions_with_trades"] == 2
@@ -834,9 +830,7 @@ def test_create_period_summary_consolidates_session_activity():
         },
     ]
 
-    summary = create_period_summary(
-        session_results
-    )
+    summary = create_period_summary(session_results)
 
     assert summary["candles"] == 300
     assert summary["longs"] == 3
@@ -874,9 +868,7 @@ def test_create_period_summary_consolidates_pnl_points():
         },
     ]
 
-    summary = create_period_summary(
-        session_results
-    )
+    summary = create_period_summary(session_results)
 
     assert summary["pnl_points"] == 200.0
 
@@ -920,9 +912,7 @@ def test_create_period_summary_calculates_average_trade_excursions():
         },
     ]
 
-    summary = create_period_summary(
-        session_results
-    )
+    summary = create_period_summary(session_results)
 
     assert summary["average_mfe_points"] == 400.0
     assert summary["average_mae_points"] == -200.0
@@ -964,9 +954,7 @@ def test_create_period_summary_calculates_median_trade_excursions():
         },
     ]
 
-    summary = create_period_summary(
-        session_results
-    )
+    summary = create_period_summary(session_results)
 
     assert summary["median_mfe_points"] == 250.0
     assert summary["median_mae_points"] == -125.0
@@ -1012,9 +1000,7 @@ def test_create_period_summary_calculates_excursion_percentiles():
         },
     ]
 
-    summary = create_period_summary(
-        session_results
-    )
+    summary = create_period_summary(session_results)
 
     assert summary["mfe_p25"] == 200.0
     assert summary["mfe_p50"] == 300.0
@@ -1060,9 +1046,7 @@ def test_create_period_summary_calculates_average_trade_duration():
         },
     ]
 
-    summary = create_period_summary(
-        session_results
-    )
+    summary = create_period_summary(session_results)
 
     assert summary["average_duration_candles"] == 20.0
 
@@ -1107,9 +1091,7 @@ def test_create_period_summary_calculates_median_trade_duration():
         },
     ]
 
-    summary = create_period_summary(
-        session_results
-    )
+    summary = create_period_summary(session_results)
 
     assert summary["median_duration_candles"] == 15.0
 
@@ -1159,9 +1141,7 @@ def test_create_period_summary_calculates_duration_percentiles():
         },
     ]
 
-    summary = create_period_summary(
-        session_results
-    )
+    summary = create_period_summary(session_results)
 
     assert summary["duration_p25"] == 20.0
     assert summary["duration_p50"] == 30.0
@@ -1186,9 +1166,7 @@ def test_create_period_summary_returns_zero_statistics_without_trades():
         },
     ]
 
-    summary = create_period_summary(
-        session_results
-    )
+    summary = create_period_summary(session_results)
 
     assert summary["average_mfe_points"] == 0.0
     assert summary["average_mae_points"] == 0.0
@@ -1247,9 +1225,7 @@ def test_create_period_summary_calculates_excursion_minimums_and_maximums():
         },
     ]
 
-    summary = create_period_summary(
-        session_results
-    )
+    summary = create_period_summary(session_results)
 
     assert summary["mfe_min"] == 100.0
     assert summary["mfe_max"] == 300.0
@@ -1303,9 +1279,7 @@ def test_create_period_summary_segments_trades_by_outcome():
         },
     ]
 
-    summary = create_period_summary(
-        session_results
-    )
+    summary = create_period_summary(session_results)
 
     assert summary["outcome_trades"]["win"] == 2
     assert summary["outcome_trades"]["loss"] == 2
@@ -1357,22 +1331,11 @@ def test_create_period_summary_calculates_average_mfe_by_outcome():
         },
     ]
 
-    summary = create_period_summary(
-        session_results
-    )
+    summary = create_period_summary(session_results)
 
-    assert (
-        summary["outcome_average_mfe"]["win"]
-        == 250.0
-    )
-    assert (
-        summary["outcome_average_mfe"]["loss"]
-        == 75.0
-    )
-    assert (
-        summary["outcome_average_mfe"]["even"]
-        == 120.0
-    )
+    assert summary["outcome_average_mfe"]["win"] == 250.0
+    assert summary["outcome_average_mfe"]["loss"] == 75.0
+    assert summary["outcome_average_mfe"]["even"] == 120.0
 
 
 def test_create_period_summary_calculates_average_mae_by_outcome():
@@ -1420,22 +1383,11 @@ def test_create_period_summary_calculates_average_mae_by_outcome():
         },
     ]
 
-    summary = create_period_summary(
-        session_results
-    )
+    summary = create_period_summary(session_results)
 
-    assert (
-        summary["outcome_average_mae"]["win"]
-        == -75.0
-    )
-    assert (
-        summary["outcome_average_mae"]["loss"]
-        == -250.0
-    )
-    assert (
-        summary["outcome_average_mae"]["even"]
-        == -125.0
-    )
+    assert summary["outcome_average_mae"]["win"] == -75.0
+    assert summary["outcome_average_mae"]["loss"] == -250.0
+    assert summary["outcome_average_mae"]["even"] == -125.0
 
 
 def test_create_period_summary_returns_zero_for_missing_outcome():
@@ -1460,30 +1412,16 @@ def test_create_period_summary_returns_zero_for_missing_outcome():
         },
     ]
 
-    summary = create_period_summary(
-        session_results
-    )
+    summary = create_period_summary(session_results)
 
     assert summary["outcome_trades"]["loss"] == 0
     assert summary["outcome_trades"]["even"] == 0
 
-    assert (
-        summary["outcome_average_mfe"]["loss"]
-        == 0.0
-    )
-    assert (
-        summary["outcome_average_mfe"]["even"]
-        == 0.0
-    )
+    assert summary["outcome_average_mfe"]["loss"] == 0.0
+    assert summary["outcome_average_mfe"]["even"] == 0.0
 
-    assert (
-        summary["outcome_average_mae"]["loss"]
-        == 0.0
-    )
-    assert (
-        summary["outcome_average_mae"]["even"]
-        == 0.0
-    )
+    assert summary["outcome_average_mae"]["loss"] == 0.0
+    assert summary["outcome_average_mae"]["even"] == 0.0
 
 
 def test_create_period_summary_calculates_average_duration_by_outcome():
@@ -1536,19 +1474,8 @@ def test_create_period_summary_calculates_average_duration_by_outcome():
         },
     ]
 
-    summary = create_period_summary(
-        session_results
-    )
+    summary = create_period_summary(session_results)
 
-    assert (
-        summary["outcome_average_duration"]["win"]
-        == 15.0
-    )
-    assert (
-        summary["outcome_average_duration"]["loss"]
-        == 40.0
-    )
-    assert (
-        summary["outcome_average_duration"]["even"]
-        == 25.0
-    )
+    assert summary["outcome_average_duration"]["win"] == 15.0
+    assert summary["outcome_average_duration"]["loss"] == 40.0
+    assert summary["outcome_average_duration"]["even"] == 25.0

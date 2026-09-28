@@ -23,19 +23,11 @@ def sma(
     """
 
     if period <= 0:
-        raise ValueError(
-            "O período deve ser maior que zero."
-        )
+        raise ValueError("O período deve ser maior que zero.")
 
     if "close" not in dataframe.columns:
-        raise ValueError(
-            "A coluna 'close' não foi encontrada."
-        )
+        raise ValueError("A coluna 'close' não foi encontrada.")
 
-    dataframe[f"sma_{period}"] = (
-        dataframe["close"]
-        .rolling(window=period)
-        .mean()
-    )
+    dataframe[f"sma_{period}"] = dataframe["close"].rolling(window=period).mean()
 
     return dataframe

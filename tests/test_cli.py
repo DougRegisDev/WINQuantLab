@@ -121,27 +121,13 @@ def test_run_strategy_executes_moving_average_crossover():
 
 
 def test_strategy_registry_contains_strategy_functions():
-    assert callable(
-        STRATEGIES[
-            "breakout"
-        ]["function"]
-    )
+    assert callable(STRATEGIES["breakout"]["function"])
 
-    assert callable(
-        STRATEGIES[
-            "moving_average_crossover"
-        ]["function"]
-    )
+    assert callable(STRATEGIES["moving_average_crossover"]["function"])
 
-    assert STRATEGIES[
-        "breakout"
-    ]["parameters"] == (
-        "lookback",
-    )
+    assert STRATEGIES["breakout"]["parameters"] == ("lookback",)
 
-    assert STRATEGIES[
-        "moving_average_crossover"
-    ]["parameters"] == (
+    assert STRATEGIES["moving_average_crossover"]["parameters"] == (
         "fast_period",
         "slow_period",
     )
@@ -183,9 +169,7 @@ def test_get_strategy_parameters_for_breakout():
         ]
     )
 
-    parameters = get_strategy_parameters(
-        args
-    )
+    parameters = get_strategy_parameters(args)
 
     assert parameters == {
         "lookback": 30,
@@ -209,9 +193,7 @@ def test_get_strategy_parameters_for_moving_average_crossover():
         ]
     )
 
-    parameters = get_strategy_parameters(
-        args
-    )
+    parameters = get_strategy_parameters(args)
 
     assert parameters == {
         "fast_period": 5,
@@ -287,9 +269,7 @@ def test_run_backtest_command_returns_report(
         ]
     )
 
-    report = cli.run_backtest_command(
-        args
-    )
+    report = cli.run_backtest_command(args)
 
     assert isinstance(report, str)
     assert "WINQuantLab - Backtest Report" in report
@@ -323,6 +303,4 @@ def test_main_prints_backtest_report(
 
     captured = capsys.readouterr()
 
-    assert captured.out.strip() == (
-        "BACKTEST REPORT"
-    )
+    assert captured.out.strip() == ("BACKTEST REPORT")
