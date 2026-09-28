@@ -39,6 +39,7 @@ classifiers = [
 ]
 
 dependencies = [
+    "numpy",
     "pandas",
 ]
 
@@ -50,10 +51,21 @@ dev = [
 ]
 
 
+[project.scripts]
+winquantlab = "cli:main"
+
+
+[tool.setuptools]
+py-modules = [
+    "cli",
+]
+
+
 [tool.setuptools.packages.find]
 where = ["."]
 
 include = [
+    "backtesting*",
     "config*",
     "core*",
     "data*",
