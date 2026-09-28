@@ -1,9 +1,9 @@
 # WINQuantLab
 
-> An open-source quantitative analysis library showcasing software engineering best practices for financial markets.
+> An open-source Python framework for quantitative market analysis, strategy research, and backtesting, built with software engineering best practices.
 
 ![Python](https://img.shields.io/badge/Python-3.13+-blue.svg)
-![Tests](https://img.shields.io/badge/Tests-126%20Passing-success)
+![Tests](https://img.shields.io/badge/Tests-302%20Passing-success)
 ![License](https://img.shields.io/badge/License-MIT-green)
 ![Status](https://img.shields.io/badge/Status-In%20Development-orange)
 
@@ -11,158 +11,420 @@
 
 ## Overview
 
-WINQuantLab is an open-source Python library designed to build a professional quantitative analysis framework for financial markets.
+WINQuantLab is an open-source Python project for quantitative market analysis, strategy research, and backtesting.
 
-Rather than focusing solely on implementing technical indicators, the project emphasizes software engineering principles such as modular architecture, code reuse, automated testing, maintainability, and technical documentation.
+The project combines financial market analysis with software engineering practices such as modular architecture, Test-Driven Development (TDD), automated testing, reusable components, explicit architectural decisions, and technical documentation.
 
-The project aims to evolve into a complete platform for quantitative research, market structure analysis, dashboards, and backtesting.
+WINQuantLab is designed as an analytical framework rather than an automated trading system.
 
----
+Its core principle is simple:
 
-## Why WINQuantLab?
+> **WINQuantLab measures. The user interprets.**
 
-Most quantitative libraries focus only on calculations.
-
-WINQuantLab focuses on building software that is:
-
-- Modular
-- Maintainable
-- Testable
-- Reusable
-- Well documented
-- Easy to extend
-
-Every feature is designed with long-term evolution in mind.
+The framework analyzes what happened after a strategy generated a signal and while the resulting trade remained active. Decisions involving capital, risk, stop loss, take profit, position sizing, and execution policy remain outside the analytical core.
 
 ---
 
-## Engineering Principles
+## Current Capabilities
 
-The project follows a software engineering approach based on:
+WINQuantLab currently provides:
 
-- Layered Architecture
-- Clean Code
-- Test-Driven Development (TDD)
-- Automated Testing
-- Code Reusability
-- Continuous Refactoring
-- Technical Documentation
-
----
-
-## Features
-
-Current features include:
-
-- Data loading
+- Market data loading
 - Data validation
 - Data normalization
-- Moving averages
-- Momentum indicators
-- Trend indicators
-- Shared mathematical calculation engine
+- Profit/Neologica CSV integration
+- Technical indicators
+- Quantitative strategies
+- Signal generation
+- Single-session backtesting engine
+- Multi-session backtesting pipeline
+- Trade excursion analysis
+- Trade duration analysis
+- Outcome-based analytics
+- Period aggregation
+- Text reports
+- Command-line interface
+- Automated test suite
 
-Future versions will include:
+---
 
-- Market Structure
-- Support & Resistance Zones
-- Backtesting Engine
-- Interactive Dashboard
-- Real-Time Analysis
+## Architecture
+
+The main analytical pipeline follows this structure:
+
+```text
+Market Data
+    |
+    v
+Loader
+    |
+    v
+Normalizer
+    |
+    v
+Session Split
+    |
+    v
+Indicators
+    |
+    v
+Strategies
+    |
+    v
+Signals
+    |
+    v
+Backtesting Engine
+    |
+    v
+Session Results
+    |
+    v
+Period Analytics
+    |
+    v
+Reports
+```
+
+Responsibilities are intentionally separated.
+
+Indicators calculate market information.
+
+Strategies consume normalized market data and generate signals.
+
+The backtesting engine executes those signals according to explicit execution rules.
+
+The analytical pipeline aggregates trades and sessions.
+
+Reports present the resulting measurements.
 
 ---
 
 ## Project Structure
 
 ```text
-WINQuantLab
-│
-├── config/
-├── core/
-├── data/
-├── docs/
-├── indicators/
-│   ├── calculations.py
-│   ├── moving_average/
-│   ├── momentum/
-│   └── trend/
-├── reports/
-├── strategies/
-├── tests/
-│
-├── README.md
-├── README.pt-BR.md
-├── requirements.txt
-├── requirements-dev.txt
-├── LICENSE
-└── CONTRIBUTING.md
+WINQuantLab/
+|
+|-- backtesting/
+|   |-- engine.py
+|   `-- pipeline.py
+|
+|-- config/
+|-- core/
+|-- data/
+|-- docs/
+|
+|-- indicators/
+|   |-- calculations.py
+|   |-- momentum/
+|   |-- moving_averages/
+|   |-- trend/
+|   `-- volume/
+|
+|-- reports/
+|   `-- text_report.py
+|
+|-- strategies/
+|   |-- breakout.py
+|   `-- moving_average_crossover.py
+|
+|-- tests/
+|
+|-- cli.py
+|-- pyproject.toml
+|-- README.md
+|-- README.pt-BR.md
+|-- CHANGELOG.md
+|-- CONTRIBUTING.md
+`-- LICENSE
 ```
 
 ---
 
-## Current Indicators
+## Technical Indicators
 
-### Moving Average
+### Moving Averages
 
 - Simple Moving Average (SMA)
 - Exponential Moving Average (EMA)
+- Weighted Moving Average (WMA)
+- Hull Moving Average (HMA)
 
 ### Momentum
 
+- Momentum
+- Rate of Change (ROC)
 - Relative Strength Index (RSI)
+- Stochastic Oscillator
+- MACD
 
 ### Trend
 
 - Average True Range (ATR)
-- Directional Movement (+DM / -DM)
 - Directional Indicator (+DI / -DI)
-- Directional Index (DX)
 - Average Directional Index (ADX)
-- SuperTrend
+- Supertrend
+- Parabolic SAR
+
+### Volume
+
+- Financial Volume
+- On-Balance Volume (OBV)
+- Volume Weighted Average Price (VWAP)
+- Weis Wave Volume
 
 ---
 
-## Current Project Status
+## Strategies
 
-| Module | Status |
-|----------|:------:|
-| Data Loader | ✅ |
-| Validation | ✅ |
-| Normalization | ✅ |
-| Moving Average | ✅ |
-| Momentum | ✅ |
-| Trend | ✅ |
-| Market Structure | 🔄 Planned |
-| Dashboard | ⏳ Planned |
-| Backtesting | ⏳ Planned |
+### Moving Average Crossover
+
+Generates trading events when a fast moving average crosses a slower moving average.
+
+Main parameters:
+
+```text
+fast_period
+slow_period
+```
+
+The fast period must be smaller than the slow period.
+
+### Breakout
+
+Generates signals when the closing price breaks the highest high or lowest low of the previous `lookback` candles.
+
+Main parameter:
+
+```text
+lookback
+```
+
+The current candle is excluded from the breakout level calculation.
+
+---
+
+## Signal Model
+
+Strategies generate events rather than persistent position states:
+
+```text
+ 1 = buy event
+ 0 = no new event
+-1 = sell event
+```
+
+Strategies do not execute trades.
+
+Execution belongs to the backtesting layer.
+
+---
+
+## Backtesting Engine
+
+The current engine uses explicit execution rules.
+
+A signal generated at the close of candle `N` is executed at the open of candle `N+1`.
+
+The engine currently supports:
+
+- FLAT, LONG, and SHORT states
+- One position at a time
+- Fixed quantity of one unit
+- No pyramiding
+- Same-direction signal ignored while positioned
+- Opposite signal closes the current position
+- No automatic reversal
+- Forced closing of an open position at the final candle
+- Point-based P&L
+- Trade duration measurement
+- Maximum Favorable Excursion (MFE)
+- Maximum Adverse Excursion (MAE)
+- WIN / LOSS / EVEN classification
+
+Financial risk management is intentionally outside the current engine.
+
+The engine does not decide:
+
+- Capital allocation
+- Stop loss
+- Take profit
+- Position sizing
+- Margin
+- Monetary risk
+- Brokerage costs
+- Slippage
+
+---
+
+## Analytical Measurements
+
+Each trade can contain analytical information including:
+
+```text
+direction
+entry_index
+entry_price
+exit_index
+exit_price
+quantity
+pnl_points
+favorable_price
+adverse_price
+mfe_points
+mae_points
+mfe_index
+mae_index
+duration_candles
+outcome
+```
+
+When a `DatetimeIndex` is available, entry and exit timestamps can also be recorded.
+
+Period analytics include distributions such as:
+
+- Average
+- Median
+- Minimum
+- Maximum
+- P25
+- P50
+- P75
+
+Measurements can also be grouped by trade outcome:
+
+```text
+WIN
+LOSS
+EVEN
+```
 
 ---
 
 ## Installation
 
-Clone the repository:
+### 1. Clone the repository
 
 ```bash
 git clone https://github.com/DougRegisDev/WINQuantLab.git
+cd WINQuantLab
 ```
 
-Install dependencies:
+### 2. Create a virtual environment
+
+Windows:
+
+```powershell
+python -m venv .venv
+.venv\Scripts\Activate.ps1
+```
+
+Linux/macOS:
 
 ```bash
-pip install -r requirements.txt
+python -m venv .venv
+source .venv/bin/activate
 ```
+
+### 3. Install WINQuantLab
 
 For development:
 
 ```bash
-pip install -r requirements-dev.txt
+python -m pip install -e ".[dev]"
 ```
+
+The project declares its runtime dependencies through `pyproject.toml`.
+
+---
+
+## Command-Line Interface
+
+After installation, the CLI is available through:
+
+```bash
+winquantlab --help
+```
+
+The current CLI provides the `backtest` command.
+
+### Breakout example
+
+```bash
+winquantlab backtest --file data/sample/market_data.csv --strategy breakout --lookback 20
+```
+
+### Moving Average Crossover example
+
+```bash
+winquantlab backtest --file data/sample/market_data.csv --strategy moving_average_crossover --fast-period 9 --slow-period 21
+```
+
+The current data integration is designed for headerless Profit/Neologica CSV exports normalized by WINQuantLab.
+
+---
+
+## Example Report
+
+A backtest produces a text report containing information such as:
+
+```text
+WINQuantLab - Backtest Report
+=============================
+
+Strategy: breakout
+Parameters: lookback=20
+
+Period analyzed
+---------------
+Sessions: ...
+Sessions with trades: ...
+Sessions without trades: ...
+Trades: ...
+
+Results
+-------
+Wins: ...
+Losses: ...
+Even: ...
+
+General excursion
+-----------------
+MFE average: ...
+MFE median: ...
+MFE P25/P50/P75: ...
+
+MAE average: ...
+MAE median: ...
+MAE P25/P50/P75: ...
+
+Duration
+--------
+Average: ...
+Median: ...
+P25/P50/P75: ...
+
+By outcome
+----------
+                  WIN        LOSS        EVEN
+...
+```
+
+The report is analytical. It does not provide trading recommendations or determine risk parameters.
 
 ---
 
 ## Testing
 
-Run the automated tests:
+WINQuantLab is developed with Test-Driven Development (TDD).
+
+Current status:
+
+```text
+302 automated tests passing
+```
+
+Run the complete test suite:
 
 ```bash
 python -m pytest
@@ -174,54 +436,123 @@ Run static analysis:
 python -m ruff check .
 ```
 
-Current project:
+Check formatting:
 
-- 126 automated tests
-- Test-Driven Development
-- Continuous validation
+```bash
+python -m ruff format --check .
+```
 
 ---
 
-## Roadmap
+## Engineering Principles
 
-### Version 1
+The project emphasizes:
 
-- Data Pipeline
-- Technical Indicators
-- Documentation
+- Modular architecture
+- Separation of responsibilities
+- Test-Driven Development
+- Automated testing
+- Clean Code
+- Reusable calculations
+- Explicit validation
+- Continuous refactoring
+- Architecture Decision Records (ADRs)
+- Technical documentation
+- Incremental evolution
 
-### Version 2
+Features are introduced when there is a concrete architectural or analytical need rather than through premature abstraction.
 
-- Market Structure
-- Supply & Demand
-- BOS / CHoCH
-- Swing Detection
+---
 
-### Version 3
+## Architecture Decision Records
 
-- Dashboard
-- Live Analysis
-- Strategy Scanner
+Important architectural decisions are documented under:
 
-### Version 4
+```text
+docs/ADR/
+```
 
-- Backtesting
-- Reports
-- Performance Metrics
+The project currently includes decisions covering topics such as:
+
+- Data architecture
+- Indicator architecture
+- Strategy architecture
+- Backtesting architecture
+- Backtest execution pipeline
+
+These records document not only what was implemented, but also the reasoning and boundaries behind each subsystem.
 
 ---
 
 ## Documentation
 
-Project documentation is available in the `/docs` directory.
-
-It includes:
+Additional documentation is available in the `docs/` directory, including:
 
 - Architecture
-- Coding Standards
-- ADRs
+- Coding standards
+- Project principles
+- Glossary
 - Roadmap
-- Project Principles
+- Architecture Decision Records
+
+---
+
+## Project Status
+
+| Component | Status |
+|---|:---:|
+| Data Pipeline | Implemented |
+| Data Validation | Implemented |
+| Data Normalization | Implemented |
+| Technical Indicators | Implemented |
+| Volume Indicators | Implemented |
+| Strategy Layer | Implemented |
+| Backtesting Engine | Implemented |
+| Multi-Session Pipeline | Implemented |
+| Trade Analytics | Implemented |
+| Period Analytics | Implemented |
+| Text Reports | Implemented |
+| Command-Line Interface | Implemented |
+| Public API Stabilization | In progress |
+| Interactive Interface | Planned |
+
+---
+
+## Roadmap
+
+### Current V1 Stabilization
+
+- Stabilize the public API
+- Improve installation and usage documentation
+- Add reproducible examples
+- Validate clean installation workflows
+- Refine package distribution
+
+### Future Evolution
+
+Potential future work includes:
+
+- Additional strategies
+- Additional analytical reports
+- Market structure research
+- Strategy comparison tools
+- Interactive visualization
+- Graphical interface
+- Extended data-source support
+
+New functionality should preserve the separation between market analysis, strategy logic, execution simulation, and reporting.
+
+---
+
+## Philosophy
+
+WINQuantLab is not intended to decide how much risk a trader should take.
+
+Its role is to provide reproducible measurements that help researchers understand strategy behavior.
+
+> **WINQuantLab measures. The user interprets.**
+
+This principle keeps analytical evidence separate from financial decisions.
 
 ---
 
@@ -229,7 +560,15 @@ It includes:
 
 Contributions are welcome.
 
-Feel free to open an Issue or submit a Pull Request.
+Before contributing, review:
+
+```text
+CONTRIBUTING.md
+docs/coding_standards.md
+docs/ADR/
+```
+
+Issues and Pull Requests can be used to propose improvements, fixes, tests, documentation, or new analytical components.
 
 ---
 
@@ -237,9 +576,7 @@ Feel free to open an Issue or submit a Pull Request.
 
 **Douglas Betta Regis**
 
-Systems Analyst • Python Developer • ServiceNow Developer
-
-Passionate about Software Engineering, Automation and Quantitative Finance.
+Systems Analyst | Python Developer | Software Engineering | Automation
 
 GitHub:
 https://github.com/DougRegisDev
