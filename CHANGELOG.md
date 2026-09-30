@@ -6,6 +6,12 @@ O formato segue o padrão **Keep a Changelog** e utiliza **Versionamento Semânt
 
 ---
 
+## [Não publicado]
+
+### Alterado
+
+- Iniciado o desenvolvimento da versão 0.9.0.
+
 ## [0.8.0] - 2026-09-30
 
 ### Adicionado
