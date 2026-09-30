@@ -88,6 +88,35 @@ def test_volume_indicators_are_available_from_public_api():
     assert callable(weis_wave)
 
 
+def test_strategies_are_available_from_public_api():
+    try:
+        from winquantlab import breakout, moving_average_crossover
+    except ImportError:
+        pytest.fail("strategies are not available from the public API")
+
+    assert callable(breakout)
+    assert callable(moving_average_crossover)
+
+
+def test_backtesting_is_available_from_public_api():
+    try:
+        from winquantlab import backtest, run_sessions
+    except ImportError:
+        pytest.fail("backtesting is not available from the public API")
+
+    assert callable(backtest)
+    assert callable(run_sessions)
+
+
+def test_text_report_is_available_from_public_api():
+    try:
+        from winquantlab import create_text_report
+    except ImportError:
+        pytest.fail("text report is not available from the public API")
+
+    assert callable(create_text_report)
+
+
 def test_public_version_matches_installed_package_version():
     installed_version = version("WINQuantLab")
 

@@ -2,6 +2,8 @@
 
 from importlib.metadata import version
 
+from backtesting.engine import backtest
+from backtesting.pipeline import run_sessions
 from data.loader import load_data
 from data.normalizer import normalize
 from indicators.momentum import macd, momentum, roc, rsi, stochastic
@@ -12,6 +14,9 @@ from indicators.volume.financial_volume import financial_volume
 from indicators.volume.obv import obv
 from indicators.volume.vwap import vwap
 from indicators.volume.weis_wave import weis_wave
+from reports.text_report import create_text_report
+from strategies.breakout import breakout
+from strategies.moving_average_crossover import moving_average_crossover
 
 __version__ = version("WINQuantLab")
 
@@ -38,4 +43,9 @@ __all__ = [
     "obv",
     "vwap",
     "weis_wave",
+    "breakout",
+    "moving_average_crossover",
+    "backtest",
+    "run_sessions",
+    "create_text_report",
 ]
