@@ -21,6 +21,73 @@ def test_load_data_is_available_from_public_api():
     assert callable(load_data)
 
 
+def test_normalize_is_available_from_public_api():
+    try:
+        from winquantlab import normalize
+    except ImportError:
+        pytest.fail("normalize is not available from the public API")
+
+    assert callable(normalize)
+
+
+def test_moving_averages_are_available_from_public_api():
+    try:
+        from winquantlab import ema, hma, sma, wma
+    except ImportError:
+        pytest.fail("moving averages are not available from the public API")
+
+    assert callable(sma)
+    assert callable(ema)
+    assert callable(wma)
+    assert callable(hma)
+
+
+def test_momentum_indicators_are_available_from_public_api():
+    try:
+        from winquantlab import macd, momentum, roc, rsi, stochastic
+    except ImportError:
+        pytest.fail("momentum indicators are not available from the public API")
+
+    assert callable(rsi)
+    assert callable(macd)
+    assert callable(momentum)
+    assert callable(roc)
+    assert callable(stochastic)
+
+
+def test_trend_indicators_are_available_from_public_api():
+    try:
+        from winquantlab import (
+            adx,
+            atr,
+            di_minus,
+            di_plus,
+            parabolic_sar,
+            supertrend,
+        )
+    except ImportError:
+        pytest.fail("trend indicators are not available from the public API")
+
+    assert callable(adx)
+    assert callable(atr)
+    assert callable(di_minus)
+    assert callable(di_plus)
+    assert callable(parabolic_sar)
+    assert callable(supertrend)
+
+
+def test_volume_indicators_are_available_from_public_api():
+    try:
+        from winquantlab import financial_volume, obv, vwap, weis_wave
+    except ImportError:
+        pytest.fail("volume indicators are not available from the public API")
+
+    assert callable(financial_volume)
+    assert callable(obv)
+    assert callable(vwap)
+    assert callable(weis_wave)
+
+
 def test_public_version_matches_installed_package_version():
     installed_version = version("WINQuantLab")
 
