@@ -3,7 +3,7 @@
 > An open-source Python framework for quantitative market analysis, strategy research, and backtesting, built with software engineering best practices.
 
 ![Python](https://img.shields.io/badge/Python-3.13+-blue.svg)
-![Tests](https://img.shields.io/badge/Tests-302%20Passing-success)
+![Tests](https://img.shields.io/badge/Tests-313%20Passing-success)
 ![License](https://img.shields.io/badge/License-MIT-green)
 ![Status](https://img.shields.io/badge/Status-In%20Development-orange)
 
@@ -44,6 +44,7 @@ WINQuantLab currently provides:
 - Period aggregation
 - Text reports
 - Command-line interface
+- Public Python API
 - Automated test suite
 
 ---
@@ -98,6 +99,8 @@ The analytical pipeline aggregates trades and sessions.
 
 Reports present the resulting measurements.
 
+The `winquantlab` package acts as the public facade of the library, keeping the public API independent from the internal module organization.
+
 ---
 
 ## Project Structure
@@ -129,6 +132,9 @@ WINQuantLab/
 |   `-- moving_average_crossover.py
 |
 |-- tests/
+|
+|-- winquantlab/
+|   `-- __init__.py
 |
 |-- cli.py
 |-- pyproject.toml
@@ -338,6 +344,123 @@ The project declares its runtime dependencies through `pyproject.toml`.
 
 ---
 
+## Public Python API
+
+WINQuantLab provides a high-level public API through the `winquantlab` package.
+
+```python
+import winquantlab as wql
+
+print(wql.__version__)
+```
+
+The public API exposes the main components of the framework without requiring users to depend on its internal module structure.
+
+### Data
+
+```python
+from winquantlab import load_data, normalize
+```
+
+### Indicators
+
+```python
+from winquantlab import (
+    adx,
+    atr,
+    di_minus,
+    di_plus,
+    ema,
+    financial_volume,
+    hma,
+    macd,
+    momentum,
+    obv,
+    parabolic_sar,
+    roc,
+    rsi,
+    sma,
+    stochastic,
+    supertrend,
+    vwap,
+    weis_wave,
+    wma,
+)
+```
+
+### Strategies
+
+```python
+from winquantlab import breakout, moving_average_crossover
+```
+
+### Backtesting
+
+```python
+from winquantlab import backtest, run_sessions
+```
+
+### Reports
+
+```python
+from winquantlab import create_text_report
+```
+
+### Basic indicator example
+
+```python
+import winquantlab as wql
+
+data = wql.load_data("market_data.csv")
+data = wql.normalize(data)
+
+data = wql.rsi(data)
+data = wql.ema(data)
+
+print(data.tail())
+```
+
+For headerless Profit/Neologica CSV exports, the data can be loaded and normalized explicitly:
+
+```python
+import winquantlab as wql
+
+data = wql.load_data("market_data.csv", header=None)
+data = wql.normalize(data, source="profit")
+```
+
+### Strategy and single-session backtest
+
+```python
+import winquantlab as wql
+
+signals = wql.breakout(data, lookback=20)
+trades = wql.backtest(signals)
+
+print(trades)
+```
+
+### Multi-session backtest
+
+`run_sessions()` receives normalized market data and a strategy callable.
+
+Strategies with custom parameters can be configured with a small wrapper:
+
+```python
+import winquantlab as wql
+
+
+def breakout_20(data):
+    return wql.breakout(data, lookback=20)
+
+
+results = wql.run_sessions(data, breakout_20)
+```
+
+This facade-first design allows the internal architecture to evolve without requiring users to import implementation modules directly.
+
+---
+
 ## Command-Line Interface
 
 After installation, the CLI is available through:
@@ -406,7 +529,7 @@ P25/P50/P75: ...
 
 By outcome
 ----------
-                  WIN        LOSS        EVEN
+                   WIN        LOSS        EVEN
 ...
 ```
 
@@ -421,7 +544,7 @@ WINQuantLab is developed with Test-Driven Development (TDD).
 Current status:
 
 ```text
-302 automated tests passing
+313 automated tests passing
 ```
 
 Run the complete test suite:
@@ -472,10 +595,12 @@ Important architectural decisions are documented under:
 docs/ADR/
 ```
 
-The project currently includes decisions covering topics such as:
+The project currently includes seven ADRs covering:
 
-- Data architecture
+- Project foundation
+- Data normalization
 - Indicator architecture
+- Moving averages architecture
 - Strategy architecture
 - Backtesting architecture
 - Backtest execution pipeline
@@ -513,26 +638,31 @@ Additional documentation is available in the `docs/` directory, including:
 | Period Analytics | Implemented |
 | Text Reports | Implemented |
 | Command-Line Interface | Implemented |
-| Public API Stabilization | In progress |
+| Public Python API | Implemented |
+| Package Distribution | In progress |
 | Interactive Interface | Planned |
 
 ---
 
 ## Roadmap
 
-### Current V1 Stabilization
+### Current 0.8.0 Stabilization
 
-- Stabilize the public API
-- Improve installation and usage documentation
-- Add reproducible examples
 - Validate clean installation workflows
+- Validate package build
 - Refine package distribution
+- Finalize release documentation
+- Prepare the `0.8.0` release
 
 ### Future Evolution
 
 Potential future work includes:
 
-- Additional strategies
+- Bollinger Bands
+- Donchian Channel
+- Pullback / Mean Reversion strategy
+- Price Action research
+- Parameter optimization
 - Additional analytical reports
 - Market structure research
 - Strategy comparison tools

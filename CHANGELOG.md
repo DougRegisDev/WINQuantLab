@@ -6,28 +6,33 @@ O formato segue o padrão **Keep a Changelog** e utiliza **Versionamento Semânt
 
 ---
 
-## [Não publicado]
+## [0.8.0] - 2026-09-30
 
 ### Adicionado
 
-#### Backtesting Multi-Sessao
+#### Backtesting Multi-Sessão
 
-- Implementado pipeline de execucao de backtests multi-sessao.
-- Implementada separacao automatica dos dados por sessao.
-- Implementada execucao independente da estrategia e do backtesting por sessao.
-- Implementada associacao dos trades as respectivas sessoes.
-- Implementada preservacao de sessoes sem trades.
-- Implementado resumo estatistico por sessao.
-- Implementada consolidacao dos resultados no resumo do periodo.
-- Implementadas contagens de sessoes, candles, trades, direcoes e resultados.
-- Implementada consolidacao do PnL em pontos.
-- Implementado calculo de MFE e MAE medios a partir dos trades individuais.
-- Implementado calculo de MFE e MAE medianos.
+- Implementado pipeline de execução de backtests multi-sessão.
+- Implementada separação automática dos dados por sessão.
+- Implementada execução independente da estratégia e do backtesting por sessão.
+- Implementada associação dos trades às respectivas sessões.
+- Implementada preservação de sessões sem trades.
+- Implementado resumo estatístico por sessão.
+- Implementada consolidação dos resultados no resumo do período.
+- Implementadas contagens de sessões, candles, trades, direções e resultados.
+- Implementada consolidação do PnL em pontos.
+- Implementado cálculo de MFE e MAE médios a partir dos trades individuais.
+- Implementado cálculo de MFE e MAE medianos.
 - Implementados percentis P25, P50 e P75 para MFE e MAE.
-- Implementadas estatisticas de duracao dos trades: media, mediana e percentis P25, P50 e P75.
-- Implementados valores minimo e maximo para as distribuicoes de MFE e MAE.
-- Implementada segmentacao por resultado dos trades, com contagem e medias de MFE, MAE e duracao para win, loss e even.
+- Implementadas estatísticas de duração dos trades: média, mediana e percentis P25, P50 e P75.
+- Implementados valores mínimo e máximo para as distribuições de MFE e MAE.
+- Implementada segmentação por resultado dos trades, com contagem e médias de MFE, MAE e duração para `win`, `loss` e `even`.
 
+#### Integração com Dados do Profit
+
+- Implementada integração do pipeline de backtesting com arquivos CSV exportados pelo Profit.
+- Integrado carregamento, normalização, estratégia e backtesting em um fluxo completo de execução.
+- Validado o pipeline utilizando dados reais de mercado.
 
 #### Indicadores de Tendência
 
@@ -113,13 +118,14 @@ O formato segue o padrão **Keep a Changelog** e utiliza **Versionamento Semânt
 
 - Criada a camada inicial de estratégias.
 - Implementada a estratégia Moving Average Crossover.
-- Implementada composição interna dos indicadores necessários pela estratégia.
+- Implementada a estratégia Breakout.
+- Implementada composição interna dos indicadores necessários pelas estratégias.
 - Definida convenção de sinais:
   - `1` para sinal de compra.
   - `0` para ausência de novo sinal.
   - `-1` para sinal de venda.
 - Definido `signal` como evento e não como estado de posição.
-- Preservado o DataFrame original durante a execução da estratégia.
+- Preservado o DataFrame original durante a execução das estratégias.
 
 #### Moving Average Crossover
 
@@ -189,9 +195,63 @@ O formato segue o padrão **Keep a Changelog** e utiliza **Versionamento Semânt
 - Implementada classificação de `outcome` em `win`, `loss` e `even`, determinada exclusivamente por `pnl_points`.
 - Implementado `duration_candles` como quantidade de candles em que a posição permaneceu efetivamente ativa.
 
+#### Analytics de Backtesting
+
+- Implementado resumo consolidado de backtest por período.
+- Implementada análise de duração dos trades.
+- Implementadas distribuições estatísticas de MFE e MAE.
+- Implementados valores mínimo, máximo, média, mediana e percentis.
+- Implementada análise segmentada por `win`, `loss` e `even`.
+- Implementada consolidação das métricas dos trades executados em múltiplas sessões.
+- Refatorado o pipeline de analytics para simplificar a consolidação dos resultados.
+
+#### Relatório Textual
+
+- Criada a camada `reports`.
+- Implementado relatório textual por meio de `create_text_report()`.
+- Implementada apresentação das métricas consolidadas do backtest.
+- Implementada apresentação das métricas de excursão, duração e resultado.
+- Implementada formatação dos parâmetros utilizados na execução.
+- Padronizada a formatação numérica das métricas do relatório.
+
+#### Interface de Linha de Comando
+
+- Implementada interface de linha de comando para execução de backtests.
+- Adicionado comando `winquantlab backtest`.
+- Implementado suporte à seleção de estratégia pela CLI.
+- Implementado suporte aos parâmetros específicos das estratégias.
+- Integrado o fluxo de carregamento, normalização, estratégia, backtesting e relatório.
+- Configurado entry point `winquantlab`.
+
+#### Packaging
+
+- Configurado `pyproject.toml` como fonte de metadados do projeto.
+- Definidas dependências de execução.
+- Definidas dependências opcionais de desenvolvimento.
+- Configurado setuptools para empacotamento do projeto.
+- Configurada instalação editável para desenvolvimento.
+- Configurado entry point da CLI.
+- Preparada a versão de desenvolvimento `0.8.0.dev0`.
+
+#### API Pública
+
+- Criado o pacote de fachada `winquantlab`.
+- Criada API pública estável para acesso às principais funcionalidades da biblioteca.
+- Expostos `load_data` e `normalize`.
+- Expostas as médias móveis SMA, EMA, WMA e HMA.
+- Expostos RSI, MACD, Momentum, ROC e Stochastic.
+- Expostos ADX, ATR, DI+, DI-, Parabolic SAR e SuperTrend.
+- Expostos Volume Financeiro, OBV, VWAP e Weis Wave.
+- Expostas as estratégias Breakout e Moving Average Crossover.
+- Expostos `backtest()` e `run_sessions()`.
+- Exposto `create_text_report()`.
+- Implementado `__version__` utilizando os metadados instalados do pacote.
+- Definido `__all__` como contrato explícito da API pública.
+- Mantidos helpers e detalhes internos de implementação fora da fachada pública.
+
 #### Testes
 
-Adicionados testes automatizados para os indicadores de tendência, volume e estratégias.
+Adicionados e expandidos testes automatizados para indicadores, estratégias, backtesting, analytics, relatórios, CLI, packaging e API pública.
 
 O Parabolic SAR possui 11 testes cobrindo:
 
@@ -329,8 +389,8 @@ O Backtesting Engine possui 49 testes cobrindo:
 
 Estado atual da suíte:
 
-- 249 testes automatizados.
-- 249 testes aprovados.
+- 313 testes automatizados.
+- 313 testes aprovados.
 - 0 falhas.
 
 #### Arquitetura
@@ -349,7 +409,6 @@ Estado atual da suíte:
 - Definido contrato inicial para estratégias.
 - Definida separação entre geração de sinais e gerenciamento de posições.
 - Definida composição de indicadores pelas estratégias sem duplicação dos cálculos.
-- Definida separação entre Strategy e futura camada de Backtesting.
 - Registrada a arquitetura de estratégias no ADR-005.
 - Adiada a criação de abstrações como Strategy base ou Protocol até que múltiplas estratégias demonstrem necessidade concreta.
 - Introduzida a camada de Backtesting.
@@ -366,6 +425,11 @@ Estado atual da suíte:
 - Formalizada a distinção entre resultado final (`outcome`) e excursões favorável/adversa.
 - Formalizada a janela ativa utilizada por MFE, MAE e duração do trade.
 - Formalizada a primeira ocorrência como convenção para índices de extremos repetidos.
+- Registrado o pipeline de execução de backtests no ADR-007.
+- Formalizada a separação entre dados, estratégias, sinais, backtesting e relatórios.
+- Introduzida fachada `winquantlab` como contrato público da biblioteca.
+- Mantida a organização modular interna desacoplada da API pública.
+- Centralizada a versão do pacote nos metadados definidos em `pyproject.toml`.
 
 #### Qualidade
 
@@ -377,26 +441,45 @@ Estado atual da suíte:
 - Moving Average Crossover desenvolvido utilizando TDD.
 - Breakout desenvolvido utilizando TDD.
 - Backtesting Engine V1 e evolução analítica V2 desenvolvidos utilizando TDD.
+- Pipeline multi-sessão e analytics cobertos por testes automatizados.
+- Relatório textual, CLI, packaging e API pública validados por testes.
 - Validações de entrada adicionadas.
 - Casos de borda cobertos por testes automatizados.
 - Preservação dos dados de entrada verificada por testes.
 - Projeto validado com Ruff.
+- Código padronizado com Ruff Formatter.
 - Suíte completa executada após as implementações.
-- 249 testes aprovados.
+- 313 testes aprovados.
 - Nenhuma regressão identificada nos testes existentes.
+
+### Alterado
+
+- Evoluído o projeto de uma coleção de componentes de análise técnica para um fluxo integrado de análise quantitativa.
+- Expandido o backtesting com execução multi-sessão e analytics de período.
+- Padronizada a interface de execução por meio da CLI.
+- Padronizado o empacotamento e a instalação do projeto.
+- Definida uma API pública de alto nível por meio do pacote `winquantlab`.
+- Atualizada a documentação principal para refletir a arquitetura e as funcionalidades atuais.
 
 ### Planejado
 
+#### Indicadores
+
+- Bollinger Bands.
+- Donchian Channel.
+
 #### Estratégias
 
-- Pullback
-- Rompimento
-- Price Action
+- Pullback / Mean Reversion.
+- Price Action.
 
 #### Backtesting
 
 - Otimização de parâmetros.
-- Relatórios estatísticos.
+
+#### Relatórios
+
+- Evolução dos formatos de relatório e visualização dos resultados.
 
 ---
 

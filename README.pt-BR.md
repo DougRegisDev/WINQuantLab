@@ -3,7 +3,7 @@
 > Framework open source em Python para análise quantitativa de mercado, pesquisa de estratégias e backtesting, desenvolvido com boas práticas de Engenharia de Software.
 
 ![Python](https://img.shields.io/badge/Python-3.13+-blue.svg)
-![Tests](https://img.shields.io/badge/Tests-302%20Passing-success)
+![Tests](https://img.shields.io/badge/Tests-313%20Passing-success)
 ![License](https://img.shields.io/badge/License-MIT-green)
 ![Status](https://img.shields.io/badge/Status-Em%20Desenvolvimento-orange)
 
@@ -44,6 +44,7 @@ Atualmente, o WINQuantLab oferece:
 - Agregação por período
 - Relatórios em texto
 - Interface de linha de comando
+- API pública Python
 - Suíte automatizada de testes
 
 ---
@@ -98,6 +99,8 @@ O pipeline analítico agrega operações e sessões.
 
 Os relatórios apresentam as medições resultantes.
 
+O pacote `winquantlab` atua como fachada pública da biblioteca, mantendo a API pública independente da organização interna dos módulos.
+
 ---
 
 ## Estrutura do Projeto
@@ -129,6 +132,9 @@ WINQuantLab/
 |   `-- moving_average_crossover.py
 |
 |-- tests/
+|
+|-- winquantlab/
+|   `-- __init__.py
 |
 |-- cli.py
 |-- pyproject.toml
@@ -338,6 +344,123 @@ As dependências necessárias para execução são declaradas no `pyproject.toml
 
 ---
 
+## API Pública Python
+
+O WINQuantLab fornece uma API pública de alto nível através do pacote `winquantlab`.
+
+```python
+import winquantlab as wql
+
+print(wql.__version__)
+```
+
+A API pública expõe os principais componentes do framework sem exigir que o usuário dependa da estrutura interna dos módulos.
+
+### Dados
+
+```python
+from winquantlab import load_data, normalize
+```
+
+### Indicadores
+
+```python
+from winquantlab import (
+    adx,
+    atr,
+    di_minus,
+    di_plus,
+    ema,
+    financial_volume,
+    hma,
+    macd,
+    momentum,
+    obv,
+    parabolic_sar,
+    roc,
+    rsi,
+    sma,
+    stochastic,
+    supertrend,
+    vwap,
+    weis_wave,
+    wma,
+)
+```
+
+### Estratégias
+
+```python
+from winquantlab import breakout, moving_average_crossover
+```
+
+### Backtesting
+
+```python
+from winquantlab import backtest, run_sessions
+```
+
+### Relatórios
+
+```python
+from winquantlab import create_text_report
+```
+
+### Exemplo básico com indicadores
+
+```python
+import winquantlab as wql
+
+data = wql.load_data("market_data.csv")
+data = wql.normalize(data)
+
+data = wql.rsi(data)
+data = wql.ema(data)
+
+print(data.tail())
+```
+
+Para arquivos CSV sem cabeçalho exportados pelo Profit/Neologica, os dados podem ser carregados e normalizados explicitamente:
+
+```python
+import winquantlab as wql
+
+data = wql.load_data("market_data.csv", header=None)
+data = wql.normalize(data, source="profit")
+```
+
+### Estratégia e backtest de uma sessão
+
+```python
+import winquantlab as wql
+
+signals = wql.breakout(data, lookback=20)
+trades = wql.backtest(signals)
+
+print(trades)
+```
+
+### Backtest multi-sessão
+
+`run_sessions()` recebe dados de mercado normalizados e uma estratégia chamável.
+
+Estratégias com parâmetros personalizados podem ser configuradas através de uma pequena função:
+
+```python
+import winquantlab as wql
+
+
+def breakout_20(data):
+    return wql.breakout(data, lookback=20)
+
+
+results = wql.run_sessions(data, breakout_20)
+```
+
+Esse desenho baseado em uma fachada pública permite que a arquitetura interna evolua sem exigir que os usuários importem diretamente os módulos de implementação.
+
+---
+
 ## Interface de Linha de Comando
 
 Após a instalação, a CLI fica disponível através de:
@@ -406,7 +529,7 @@ P25/P50/P75: ...
 
 By outcome
 ----------
-                  WIN        LOSS        EVEN
+                   WIN        LOSS        EVEN
 ...
 ```
 
@@ -421,7 +544,7 @@ O WINQuantLab é desenvolvido utilizando Test-Driven Development (TDD).
 Status atual:
 
 ```text
-302 testes automatizados passando
+313 testes automatizados passando
 ```
 
 Execute toda a suíte de testes:
@@ -472,10 +595,12 @@ As principais decisões arquiteturais são documentadas em:
 docs/ADR/
 ```
 
-Atualmente, o projeto possui decisões relacionadas a temas como:
+Atualmente, o projeto possui sete ADRs relacionados a:
 
-- Arquitetura de dados
+- Fundação do projeto
+- Normalização de dados
 - Arquitetura dos indicadores
+- Arquitetura das médias móveis
 - Arquitetura das estratégias
 - Arquitetura de backtesting
 - Pipeline de execução de backtests
@@ -513,26 +638,31 @@ Documentação adicional está disponível no diretório `docs/`, incluindo:
 | Análise por Período | Implementado |
 | Relatórios em Texto | Implementado |
 | Interface de Linha de Comando | Implementado |
-| Estabilização da API Pública | Em andamento |
+| API Pública Python | Implementado |
+| Distribuição do Pacote | Em andamento |
 | Interface Interativa | Planejado |
 
 ---
 
 ## Roadmap
 
-### Estabilização Atual da V1
+### Estabilização Atual da 0.8.0
 
-- Estabilizar a API pública
-- Melhorar a documentação de instalação e uso
-- Adicionar exemplos reproduzíveis
 - Validar instalação em ambiente limpo
+- Validar o build do pacote
 - Refinar a distribuição do pacote
+- Finalizar a documentação da release
+- Preparar a release `0.8.0`
 
 ### Evolução Futura
 
 Possíveis evoluções incluem:
 
-- Novas estratégias
+- Bollinger Bands
+- Donchian Channel
+- Estratégia Pullback / Mean Reversion
+- Estudos de Price Action
+- Otimização de parâmetros
 - Novos relatórios analíticos
 - Estudos de Market Structure
 - Ferramentas de comparação de estratégias

@@ -5,8 +5,8 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "WINQuantLab"
-version = "0.8.0.dev0"
-description = "Framework para pesquisa, desenvolvimento e backtesting de estratÃ©gias quantitativas."
+version = "0.8.0"
+description = "Framework para pesquisa, desenvolvimento e backtesting de estratégias quantitativas."
 readme = "README.md"
 requires-python = ">=3.13"
 license = { text = "MIT" }
@@ -55,6 +55,11 @@ dev = [
 winquantlab = "cli:main"
 
 
+[project.urls]
+Repository = "https://github.com/DougRegisDev/WINQuantLab"
+Issues = "https://github.com/DougRegisDev/WINQuantLab/issues"
+
+
 [tool.setuptools]
 py-modules = [
     "cli",
@@ -72,6 +77,7 @@ include = [
     "indicators*",
     "reports*",
     "strategies*",
+    "winquantlab*",
 ]
 
 exclude = [
@@ -109,4 +115,3 @@ select = [
 quote-style = "double"
 indent-style = "space"
 line-ending = "auto"
-
