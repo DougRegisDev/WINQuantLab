@@ -70,6 +70,7 @@ py-modules = [
 where = ["."]
 
 include = [
+    "analytics*",
     "backtesting*",
     "config*",
     "core*",

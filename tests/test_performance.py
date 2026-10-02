@@ -18,9 +18,9 @@ def test_calculate_total_pnl_returns_zero_for_empty_trades():
 
 def test_calculate_total_pnl_sums_trade_results():
     trades = [
-        {"pnl": 100.0},
-        {"pnl": -40.0},
-        {"pnl": 25.0},
+        {"pnl_points": 100.0},
+        {"pnl_points": -40.0},
+        {"pnl_points": 25.0},
     ]
 
     result = calculate_total_pnl(trades)
@@ -30,8 +30,8 @@ def test_calculate_total_pnl_sums_trade_results():
 
 def test_calculate_total_pnl_preserves_decimal_precision():
     trades = [
-        {"pnl": 100.555},
-        {"pnl": 20.0},
+        {"pnl_points": 100.555},
+        {"pnl_points": 20.0},
     ]
 
     result = calculate_total_pnl(trades)
@@ -49,9 +49,9 @@ def test_calculate_average_trade_returns_zero_for_empty_trades():
 
 def test_calculate_average_trade_returns_average_pnl_per_trade():
     trades = [
-        {"pnl": 100.0},
-        {"pnl": -40.0},
-        {"pnl": 30.0},
+        {"pnl_points": 100.0},
+        {"pnl_points": -40.0},
+        {"pnl_points": 30.0},
     ]
 
     result = calculate_average_trade(trades)
@@ -69,10 +69,10 @@ def test_calculate_win_rate_returns_zero_for_empty_trades():
 
 def test_calculate_win_rate_returns_percentage_of_winning_trades():
     trades = [
-        {"pnl": 100.0},
-        {"pnl": -50.0},
-        {"pnl": 30.0},
-        {"pnl": 0.0},
+        {"pnl_points": 100.0},
+        {"pnl_points": -50.0},
+        {"pnl_points": 30.0},
+        {"pnl_points": 0.0},
     ]
 
     result = calculate_win_rate(trades)
@@ -82,10 +82,10 @@ def test_calculate_win_rate_returns_percentage_of_winning_trades():
 
 def test_calculate_gross_profit_sums_only_winning_trades():
     trades = [
-        {"pnl": 100.0},
-        {"pnl": -50.0},
-        {"pnl": 30.0},
-        {"pnl": 0.0},
+        {"pnl_points": 100.0},
+        {"pnl_points": -50.0},
+        {"pnl_points": 30.0},
+        {"pnl_points": 0.0},
     ]
 
     result = calculate_gross_profit(trades)
@@ -95,9 +95,9 @@ def test_calculate_gross_profit_sums_only_winning_trades():
 
 def test_calculate_gross_profit_returns_zero_without_winning_trades():
     trades = [
-        {"pnl": -50.0},
-        {"pnl": -20.0},
-        {"pnl": 0.0},
+        {"pnl_points": -50.0},
+        {"pnl_points": -20.0},
+        {"pnl_points": 0.0},
     ]
 
     result = calculate_gross_profit(trades)
@@ -107,11 +107,11 @@ def test_calculate_gross_profit_returns_zero_without_winning_trades():
 
 def test_calculate_gross_loss_sums_only_losing_trades():
     trades = [
-        {"pnl": 100.0},
-        {"pnl": -50.0},
-        {"pnl": 30.0},
-        {"pnl": -20.0},
-        {"pnl": 0.0},
+        {"pnl_points": 100.0},
+        {"pnl_points": -50.0},
+        {"pnl_points": 30.0},
+        {"pnl_points": -20.0},
+        {"pnl_points": 0.0},
     ]
 
     result = calculate_gross_loss(trades)
@@ -121,9 +121,9 @@ def test_calculate_gross_loss_sums_only_losing_trades():
 
 def test_calculate_gross_loss_returns_zero_without_losing_trades():
     trades = [
-        {"pnl": 100.0},
-        {"pnl": 30.0},
-        {"pnl": 0.0},
+        {"pnl_points": 100.0},
+        {"pnl_points": 30.0},
+        {"pnl_points": 0.0},
     ]
 
     result = calculate_gross_loss(trades)
@@ -133,9 +133,9 @@ def test_calculate_gross_loss_returns_zero_without_losing_trades():
 
 def test_calculate_profit_factor_returns_ratio_between_profit_and_loss():
     trades = [
-        {"pnl": 600.0},
-        {"pnl": -200.0},
-        {"pnl": -100.0},
+        {"pnl_points": 600.0},
+        {"pnl_points": -200.0},
+        {"pnl_points": -100.0},
     ]
 
     result = calculate_profit_factor(trades)
@@ -145,8 +145,8 @@ def test_calculate_profit_factor_returns_ratio_between_profit_and_loss():
 
 def test_calculate_profit_factor_returns_zero_for_only_losses():
     trades = [
-        {"pnl": -200.0},
-        {"pnl": -100.0},
+        {"pnl_points": -200.0},
+        {"pnl_points": -100.0},
     ]
 
     result = calculate_profit_factor(trades)
@@ -156,8 +156,8 @@ def test_calculate_profit_factor_returns_zero_for_only_losses():
 
 def test_calculate_profit_factor_returns_infinity_for_only_wins():
     trades = [
-        {"pnl": 200.0},
-        {"pnl": 100.0},
+        {"pnl_points": 200.0},
+        {"pnl_points": 100.0},
     ]
 
     result = calculate_profit_factor(trades)
@@ -167,8 +167,8 @@ def test_calculate_profit_factor_returns_infinity_for_only_wins():
 
 def test_calculate_profit_factor_returns_none_for_only_even_trades():
     trades = [
-        {"pnl": 0.0},
-        {"pnl": 0.0},
+        {"pnl_points": 0.0},
+        {"pnl_points": 0.0},
     ]
 
     result = calculate_profit_factor(trades)

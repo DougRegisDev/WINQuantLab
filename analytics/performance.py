@@ -2,12 +2,12 @@
 
 
 def calculate_total_pnl(trades: list[dict]) -> float:
-    """Calculate the total PnL from a collection of trades."""
-    return sum((trade["pnl"] for trade in trades), start=0.0)
+    """Calculate the total PnL in points from a collection of trades."""
+    return sum((trade["pnl_points"] for trade in trades), start=0.0)
 
 
 def calculate_average_trade(trades: list[dict]) -> float:
-    """Calculate the average PnL per trade."""
+    """Calculate the average PnL in points per trade."""
     if not trades:
         return 0.0
 
@@ -21,23 +21,23 @@ def calculate_win_rate(trades: list[dict]) -> float:
     if not trades:
         return 0.0
 
-    winning_trades = sum(1 for trade in trades if trade["pnl"] > 0)
+    winning_trades = sum(1 for trade in trades if trade["pnl_points"] > 0)
 
     return winning_trades / len(trades) * 100
 
 
 def calculate_gross_profit(trades: list[dict]) -> float:
-    """Calculate the sum of PnL from winning trades."""
+    """Calculate the sum of PnL in points from winning trades."""
     return sum(
-        (trade["pnl"] for trade in trades if trade["pnl"] > 0),
+        (trade["pnl_points"] for trade in trades if trade["pnl_points"] > 0),
         start=0.0,
     )
 
 
 def calculate_gross_loss(trades: list[dict]) -> float:
-    """Calculate the sum of PnL from losing trades."""
+    """Calculate the sum of PnL in points from losing trades."""
     return sum(
-        (trade["pnl"] for trade in trades if trade["pnl"] < 0),
+        (trade["pnl_points"] for trade in trades if trade["pnl_points"] < 0),
         start=0.0,
     )
 
